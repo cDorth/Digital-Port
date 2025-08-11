@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Admin Action Logs</h1>
+                <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to User Management
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Administrative Action History</h5>
+                </div>
+                <div class="card-body">
+                    {% if logs.items %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date/Time</th>
+                                        <th>Administrator</th>
+                                        <th>Action</th>
+                                        <th>Target User</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for log in logs.items %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">{{ log.created_at.strftime('%Y-%m-%d') }}</div>
+                                            <small class="text-muted">{{ log.created_at.strftime('%H:%M:%S') }}</small>
+                                        </td>
+                                        <td>
+                                            {% if log.admin_user %}
+                                                <div class="d-flex align-items-center">
+                                                    <div>
+                                                        <div class="fw-bold">{{ log.admin_user.username }}</div>
+                                                        <small class="text-muted">{{ log.admin_user.email }}</small>
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-cog text-secondary me-2"></i>
+                                                    <em>System</em>
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge fs-6
+                                                {% if log.action == 'promote_to_admin' %}bg-success
+                                                {% elif log.action == 'demote_from_admin' %}bg-warning text-dark
+                                                {% elif log.action == 'deactivate_user' %}bg-danger
+                                                {% elif log.action == 'activate_user' %}bg-info
+                                                {% elif log.action == 'create_super_admin' %}bg-dark
+                                                {% else %}bg-secondary
+                                                {% endif %}">
+                                                {% if log.action == 'promote_to_admin' %}
+                                                    <i class="fas fa-arrow-up"></i> Promote to Admin
+                                                {% elif log.action == 'demote_from_admin' %}
+                                                    <i class="fas fa-arrow-down"></i> Remove Admin
+                                                {% elif log.action == 'deactivate_user' %}
+                                                    <i class="fas fa-ban"></i> Deactivate User
+                                                {% elif log.action == 'activate_user' %}
+                                                    <i class="fas fa-check"></i> Activate User
+                                                {% elif log.action == 'create_super_admin' %}
+                                                    <i class="fas fa-crown"></i> Create Super Admin
+                                                {% else %}
+                                                    {{ log.action.replace('_', ' ').title() }}
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if log.target_user %}
+                                                <div>
+                                                    <div class="fw-bold">{{ log.target_user.username }}</div>
+                                                    <small class="text-muted">{{ log.target_user.email }}</small>
+                                                </div>
+                                            {% elif log.target_user_email %}
+                                                <div class="text-muted">{{ log.target_user_email }}</div>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if log.description %}
+                                                <small class="text-muted">{{ log.description }}</small>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if logs.pages > 1 %}
+                        <nav aria-label="Admin logs pagination" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if logs.has_prev %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('admin_logs', page=logs.prev_num) }}">
+                                            <i class="fas fa-chevron-left"></i> Previous
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for page_num in logs.iter_pages() %}
+                                    {% if page_num %}
+                                        {% if page_num != logs.page %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ url_for('admin_logs', page=page_num) }}">{{ page_num }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ page_num }}</span>
+                                            </li>
+                                        {% endif %}
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if logs.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('admin_logs', page=logs.next_num) }}">
+                                            Next <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No admin actions recorded yet</h5>
+                            <p class="text-muted">Administrative actions will appear here once performed.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            {% if logs.items %}
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Total Actions</h5>
+                            <h3 class="text-primary">{{ logs.total }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Current Page</h5>
+                            <h3 class="text-info">{{ logs.page }} / {{ logs.pages }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

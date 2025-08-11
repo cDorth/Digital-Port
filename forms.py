@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SelectField, SubmitField
+from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SelectField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, URL, Optional
 from models import Category
 
@@ -57,3 +57,20 @@ class AboutMeForm(FlaskForm):
     email = StringField('Email', validators=[Optional(), Email()])
     phone = StringField('Phone', validators=[Optional(), Length(max=20)])
     submit = SubmitField('Save')
+
+# Admin Forms
+class UserPromoteForm(FlaskForm):
+    user_id = HiddenField('User ID', validators=[DataRequired()])
+    submit = SubmitField('Promote to Admin')
+
+class UserDemoteForm(FlaskForm):
+    user_id = HiddenField('User ID', validators=[DataRequired()])
+    submit = SubmitField('Remove Admin')
+
+class UserDeactivateForm(FlaskForm):
+    user_id = HiddenField('User ID', validators=[DataRequired()])
+    submit = SubmitField('Deactivate User')
+
+class UserActivateForm(FlaskForm):
+    user_id = HiddenField('User ID', validators=[DataRequired()])
+    submit = SubmitField('Activate User')

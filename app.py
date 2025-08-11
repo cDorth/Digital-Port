@@ -46,21 +46,33 @@ def load_user(user_id):
 with app.app_context():
     # Make sure to import the models here or their tables won't be created
     import models  # noqa: F401
+    
+    # Drop all tables and recreate them to handle new columns
+    db.drop_all()
     db.create_all()
     
-    # Create admin user if it doesn't exist
-    from models import User
+    # Create super admin user
+    from models import User, AdminLog
     from werkzeug.security import generate_password_hash
     
-    admin_user = User.query.filter_by(email='admin@portfolio.com').first()
-    if not admin_user:
-        admin_user = User(
-            username='admin',
-            email='admin@portfolio.com',
-            password_hash=generate_password_hash('admin123'),
-            is_admin=True,
-            full_name='Portfolio Admin'
-        )
-        db.session.add(admin_user)
-        db.session.commit()
-        logging.info("Admin user created: admin@portfolio.com / admin123")
+    super_admin = User(
+        username='superadmin',
+        email='admin@admin.com',
+        password_hash=generate_password_hash('Admin@123'),
+        is_admin=True,
+        is_super_admin=True,
+        is_active=True,
+        full_name='Super Administrator'
+    )
+    db.session.add(super_admin)
+    
+    # Log the super admin creation
+    log_entry = AdminLog(
+        admin_id=None,  # System created
+        action='create_super_admin',
+        target_user_email='admin@admin.com',
+        description='System created super administrator account'
+    )
+    db.session.add(log_entry)
+    db.session.commit()
+    logging.info("Super admin user created: admin@admin.com / Admin@123")

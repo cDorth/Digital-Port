@@ -34,3 +34,58 @@ def parse_tags(tags_string):
     if not tags_string:
         return []
     return [tag.strip() for tag in tags_string.split(',') if tag.strip()]
+
+# Admin utilities and decorators
+from functools import wraps
+from flask import abort, request, jsonify
+from flask_login import current_user
+
+def admin_required(f):
+    """Decorator to require admin privileges for a route."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            return abort(403)
+        
+        if not current_user.is_admin:
+            return abort(403)
+            
+        if not current_user.is_active:
+            return abort(403)
+            
+        return f(*args, **kwargs)
+    return decorated_function
+
+def super_admin_required(f):
+    """Decorator to require super admin privileges for a route."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            return abort(403)
+        
+        if not current_user.is_super_admin:
+            return abort(403)
+            
+        if not current_user.is_active:
+            return abort(403)
+            
+        return f(*args, **kwargs)
+    return decorated_function
+
+def log_admin_action(admin_user, action, target_user=None, description=None):
+    """Log an administrative action."""
+    from app import db
+    from models import AdminLog
+    
+    log_entry = AdminLog(
+        admin_id=admin_user.id if admin_user else None,
+        action=action,
+        target_user_id=target_user.id if target_user else None,
+        target_user_email=target_user.email if target_user else None,
+        description=description
+    )
+    
+    db.session.add(log_entry)
+    db.session.commit()
+    
+    return log_entry

@@ -38,10 +38,31 @@
                         <a class="nav-link" href="{{ url_for('about') }}">About</a>
                     </li>
                     {% if current_user.is_authenticated and current_user.is_admin %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
-                            <i class="fas fa-cog me-1"></i>Admin
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-shield-alt me-1"></i>Admin Area
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_users') }}">
+                                <i class="fas fa-users me-2"></i>User Management
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_logs') }}">
+                                <i class="fas fa-clipboard-list me-2"></i>Admin Logs
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_projects') }}">
+                                <i class="fas fa-folder me-2"></i>Manage Projects
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_categories') }}">
+                                <i class="fas fa-tags me-2"></i>Manage Categories
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_about') }}">
+                                <i class="fas fa-user-edit me-2"></i>Edit About
+                            </a></li>
+                        </ul>
                     </li>
                     {% endif %}
                 </ul>

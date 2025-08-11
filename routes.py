@@ -5,8 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import or_, desc
 from app import app, db
 from models import User, Project, Category, Comment, Like, Tag, AboutMe, project_tags
-from forms import LoginForm, RegisterForm, ProjectForm, CategoryForm, CommentForm, SearchForm, AboutMeForm
-from utils import save_picture, delete_picture, parse_tags
+from forms import LoginForm, RegisterForm, ProjectForm, CategoryForm, CommentForm, SearchForm, AboutMeForm, UserPromoteForm, UserDemoteForm, UserActivateForm, UserDeactivateForm
+from utils import save_picture, delete_picture, parse_tags, admin_required, super_admin_required, log_admin_action
 
 # Public routes
 @app.route('/')
@@ -377,6 +377,178 @@ def admin_about():
         return redirect(url_for('admin_about'))
     
     return render_template('admin/about_form.html', form=form, about_me=about_me)
+
+
+
+# Admin User Management Routes
+@app.route('/admin/users')
+@admin_required
+def admin_users():
+    """Admin dashboard with user management"""
+    users = User.query.order_by(User.created_at.desc()).all()
+    
+    # Get admin logs for audit trail
+    from models import AdminLog
+    recent_logs = AdminLog.query.order_by(AdminLog.created_at.desc()).limit(10).all()
+    
+    # Forms for user actions
+    promote_form = UserPromoteForm()
+    demote_form = UserDemoteForm()
+    activate_form = UserActivateForm()
+    deactivate_form = UserDeactivateForm()
+    
+    return render_template('admin/users.html', 
+                         title='User Management',
+                         users=users, 
+                         recent_logs=recent_logs,
+                         promote_form=promote_form,
+                         demote_form=demote_form,
+                         activate_form=activate_form,
+                         deactivate_form=deactivate_form)
+
+@app.route('/admin/promote_user', methods=['POST'])
+@admin_required
+def promote_user():
+    """Promote a user to admin"""
+    form = UserPromoteForm()
+    
+    if form.validate_on_submit():
+        user_id = int(form.user_id.data)
+        target_user = User.query.get_or_404(user_id)
+        
+        if target_user.is_admin:
+            flash('User is already an admin.', 'warning')
+        else:
+            target_user.is_admin = True
+            db.session.commit()
+            
+            # Log the action
+            log_admin_action(
+                admin_user=current_user,
+                action='promote_to_admin',
+                target_user=target_user,
+                description=f'User {target_user.email} promoted to admin by {current_user.email}'
+            )
+            
+            flash(f'User {target_user.username} promoted to admin successfully!', 'success')
+    
+    return redirect(url_for('admin_users'))
+
+@app.route('/admin/demote_user', methods=['POST'])
+@admin_required
+def demote_user():
+    """Demote a user from admin (super admin only for other admins)"""
+    form = UserDemoteForm()
+    
+    if form.validate_on_submit():
+        user_id = int(form.user_id.data)
+        target_user = User.query.get_or_404(user_id)
+        
+        # Prevent removing super admin privileges
+        if target_user.is_super_admin:
+            flash('Cannot remove super admin privileges. Super admin is protected.', 'danger')
+            return redirect(url_for('admin_users'))
+        
+        # Only super admin can demote other admins
+        if target_user.is_admin and not current_user.is_super_admin:
+            flash('Only super admin can demote other administrators.', 'danger')
+            return redirect(url_for('admin_users'))
+        
+        if not target_user.is_admin:
+            flash('User is not an admin.', 'warning')
+        else:
+            target_user.is_admin = False
+            db.session.commit()
+            
+            # Log the action
+            log_admin_action(
+                admin_user=current_user,
+                action='demote_from_admin',
+                target_user=target_user,
+                description=f'User {target_user.email} demoted from admin by {current_user.email}'
+            )
+            
+            flash(f'User {target_user.username} demoted from admin successfully!', 'success')
+    
+    return redirect(url_for('admin_users'))
+
+@app.route('/admin/deactivate_user', methods=['POST'])
+@admin_required
+def deactivate_user():
+    """Deactivate a user account"""
+    form = UserDeactivateForm()
+    
+    if form.validate_on_submit():
+        user_id = int(form.user_id.data)
+        target_user = User.query.get_or_404(user_id)
+        
+        # Prevent deactivating super admin
+        if target_user.is_super_admin:
+            flash('Cannot deactivate super admin account. Super admin is protected.', 'danger')
+            return redirect(url_for('admin_users'))
+        
+        # Only super admin can deactivate other admins
+        if target_user.is_admin and not current_user.is_super_admin:
+            flash('Only super admin can deactivate other administrators.', 'danger')
+            return redirect(url_for('admin_users'))
+        
+        if not target_user.is_active:
+            flash('User is already deactivated.', 'warning')
+        else:
+            target_user.is_active = False
+            db.session.commit()
+            
+            # Log the action
+            log_admin_action(
+                admin_user=current_user,
+                action='deactivate_user',
+                target_user=target_user,
+                description=f'User {target_user.email} deactivated by {current_user.email}'
+            )
+            
+            flash(f'User {target_user.username} deactivated successfully!', 'success')
+    
+    return redirect(url_for('admin_users'))
+
+@app.route('/admin/activate_user', methods=['POST'])
+@admin_required
+def activate_user():
+    """Activate a user account"""
+    form = UserActivateForm()
+    
+    if form.validate_on_submit():
+        user_id = int(form.user_id.data)
+        target_user = User.query.get_or_404(user_id)
+        
+        if target_user.is_active:
+            flash('User is already active.', 'warning')
+        else:
+            target_user.is_active = True
+            db.session.commit()
+            
+            # Log the action
+            log_admin_action(
+                admin_user=current_user,
+                action='activate_user',
+                target_user=target_user,
+                description=f'User {target_user.email} activated by {current_user.email}'
+            )
+            
+            flash(f'User {target_user.username} activated successfully!', 'success')
+    
+    return redirect(url_for('admin_users'))
+
+@app.route('/admin/logs')
+@admin_required
+def admin_logs():
+    """View admin action logs"""
+    page = request.args.get('page', 1, type=int)
+    
+    from models import AdminLog
+    logs = AdminLog.query.order_by(AdminLog.created_at.desc()).paginate(
+        page=page, per_page=50, error_out=False)
+    
+    return render_template('admin/logs.html', title='Admin Logs', logs=logs)
 
 # Error handlers
 @app.errorhandler(403)

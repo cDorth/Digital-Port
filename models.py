@@ -10,6 +10,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     full_name = db.Column(db.String(200))
     is_admin = db.Column(db.Boolean, default=False)
+    is_super_admin = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -49,11 +51,11 @@ class Project(db.Model):
     
     @property
     def likes_count(self):
-        return len(self.likes)
+        return Like.query.filter_by(project_id=self.id).count()
     
     @property
     def comments_count(self):
-        return len(self.comments)
+        return Comment.query.filter_by(project_id=self.id).count()
 
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -96,3 +98,16 @@ class AboutMe(db.Model):
     email = db.Column(db.String(120))
     phone = db.Column(db.String(20))
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class AdminLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    admin_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    action = db.Column(db.String(100), nullable=False)
+    target_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    target_user_email = db.Column(db.String(120))
+    description = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    admin_user = db.relationship('User', foreign_keys=[admin_id], backref='admin_logs')
+    target_user = db.relationship('User', foreign_keys=[target_user_id], backref='target_logs')

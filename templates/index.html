@@ -1,25 +1,73 @@
 {% extends "base.html" %}
 
+{% block title %}Digital Portfolio - Modern & Professional{% endblock %}
+
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section bg-primary text-white py-5">
+<section class="hero">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-4">Welcome to My Digital Portfolio</h1>
-                <p class="lead mb-4">Explore my journey through innovative projects, creative solutions, and technical achievements. Discover the passion behind every line of code.</p>
-                <div class="d-flex gap-3">
-                    <a href="{{ url_for('projects') }}" class="btn btn-light btn-lg">
-                        <i class="fas fa-folder-open me-2"></i>View Projects
-                    </a>
-                    <a href="{{ url_for('about') }}" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-user me-2"></i>About Me
-                    </a>
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6 hero-content">
+                <div class="mb-4">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Welcome to My <span class="text-primary">Digital Portfolio</span>
+                    </h1>
+                    <p class="lead text-secondary mb-4">
+                        Showcasing creativity, innovation, and technical excellence through carefully crafted projects and experiences.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="{{ url_for('projects') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-rocket me-2"></i>View Projects
+                        </a>
+                        <a href="{{ url_for('about') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-user me-2"></i>About Me
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Stats Section -->
+                <div class="row g-4 mt-4">
+                    <div class="col-4">
+                        <div class="text-center">
+                            <div class="h3 fw-bold text-primary mb-1">{{ featured_projects|length + recent_projects|length }}</div>
+                            <small class="text-muted">Projects</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <div class="h3 fw-bold text-primary mb-1">{{ featured_projects|length }}</div>
+                            <small class="text-muted">Featured</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <div class="h3 fw-bold text-primary mb-1">{{ moment().format('YYYY') if moment else '2024' }}</div>
+                            <small class="text-muted">Since</small>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="text-center">
-                    <i class="fas fa-laptop-code fa-10x opacity-75"></i>
+            
+            <div class="col-lg-6 text-center">
+                <div class="position-relative">
+                    <div class="hero-image-container">
+                        <svg width="400" height="400" viewBox="0 0 400 400" class="hero-svg">
+                            <defs>
+                                <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:var(--primary-color);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:var(--secondary-color);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="200" cy="200" r="150" fill="url(#heroGradient)" opacity="0.1"/>
+                            <circle cx="200" cy="200" r="120" fill="none" stroke="url(#heroGradient)" stroke-width="2"/>
+                            <circle cx="200" cy="200" r="90" fill="none" stroke="url(#heroGradient)" stroke-width="2" opacity="0.5"/>
+                            
+                            <!-- Code symbols -->
+                            <text x="200" y="180" text-anchor="middle" class="code-symbol">&lt;/&gt;</text>
+                            <text x="160" y="220" text-anchor="middle" class="code-symbol">{}</text>
+                            <text x="240" y="220" text-anchor="middle" class="code-symbol">fn()</text>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
@@ -28,35 +76,80 @@
 
 <!-- Featured Projects -->
 {% if featured_projects %}
-<section class="py-5">
+<section class="py-5 bg-light">
     <div class="container">
-        <h2 class="text-center mb-5">
-            <i class="fas fa-star text-warning me-2"></i>Featured Projects
-        </h2>
-        <div class="row">
+        <div class="text-center mb-5">
+            <h2 class="h1 fw-bold">Featured Projects</h2>
+            <p class="lead text-muted">Highlighting my best work and innovations</p>
+        </div>
+        
+        <div class="row g-4">
             {% for project in featured_projects %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 shadow-sm">
+            <div class="col-md-6 col-lg-4">
+                <div class="card project-card h-100">
                     {% if project.image_filename %}
-                    <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
-                         class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
-                    {% else %}
-                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" 
-                         style="height: 200px;">
-                        <i class="fas fa-image fa-3x text-muted"></i>
+                    <div class="position-relative overflow-hidden">
+                        <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
+                             class="card-img-top" alt="{{ project.title }}">
+                        <div class="overlay">
+                            <a href="{{ url_for('project_detail', id=project.id) }}" 
+                               class="btn btn-white btn-lg">
+                                <i class="fas fa-eye me-2"></i>View Project
+                            </a>
+                        </div>
                     </div>
                     {% endif %}
+                    
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">{{ project.title }}</h5>
-                        <p class="card-text flex-grow-1">{{ project.description[:150] }}{% if project.description|length > 150 %}...{% endif %}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="text-muted small">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-primary">Featured</span>
+                            <small class="text-muted">
                                 <i class="fas fa-eye me-1"></i>{{ project.views_count }}
-                                <i class="fas fa-heart ms-2 me-1"></i>{{ project.likes_count }}
+                            </small>
+                        </div>
+                        
+                        <h5 class="card-title fw-bold">{{ project.title }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ project.description|truncate(100) }}</p>
+                        
+                        <!-- Project Tags -->
+                        {% if project.tags %}
+                        <div class="mb-3">
+                            {% for tag in project.tags[:3] %}
+                            <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                            {% endfor %}
+                            {% if project.tags|length > 3 %}
+                            <span class="badge bg-light text-muted">+{{ project.tags|length - 3 }}</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group" role="group">
+                                {% if project.demo_url %}
+                                <a href="{{ project.demo_url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                    <i class="fas fa-external-link-alt me-1"></i>Demo
+                                </a>
+                                {% endif %}
+                                {% if project.github_url %}
+                                <a href="{{ project.github_url }}" class="btn btn-outline-secondary btn-sm" target="_blank">
+                                    <i class="fab fa-github me-1"></i>Code
+                                </a>
+                                {% endif %}
                             </div>
-                            <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-primary btn-sm">
-                                View Details
-                            </a>
+                            
+                            <div class="d-flex align-items-center">
+                                {% if current_user.is_authenticated %}
+                                <button class="btn btn-sm btn-outline-danger me-2" 
+                                        onclick="toggleLike({{ project.id }})"
+                                        data-project-id="{{ project.id }}">
+                                    <i class="far fa-heart"></i>
+                                    <span class="like-count">{{ project.likes_count }}</span>
+                                </button>
+                                {% endif %}
+                                <small class="text-muted">
+                                    <i class="fas fa-comments me-1"></i>{{ project.comments_count }}
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,56 +162,183 @@
 
 <!-- Recent Projects -->
 {% if recent_projects %}
-<section class="py-5 bg-body-secondary">
+<section class="py-5">
     <div class="container">
-        <h2 class="text-center mb-5">
-            <i class="fas fa-clock me-2"></i>Recent Projects
-        </h2>
-        <div class="row">
-            {% for project in recent_projects %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="h1 fw-bold">Recent Projects</h2>
+                <p class="lead text-muted mb-0">Latest additions to my portfolio</p>
+            </div>
+            <a href="{{ url_for('projects') }}" class="btn btn-outline-primary">
+                View All <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="row g-4">
+            {% for project in recent_projects[:6] %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card project-card h-100">
                     {% if project.image_filename %}
-                    <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
-                         class="card-img-top" alt="{{ project.title }}" style="height: 180px; object-fit: cover;">
-                    {% endif %}
-                    <div class="card-body d-flex flex-column">
-                        <h6 class="card-title">{{ project.title }}</h6>
-                        <p class="card-text small flex-grow-1">{{ project.description[:100] }}{% if project.description|length > 100 %}...{% endif %}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                {{ project.created_at.strftime('%b %d, %Y') }}
-                            </small>
-                            <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-outline-primary btn-sm">
-                                View
+                    <div class="position-relative overflow-hidden">
+                        <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
+                             class="card-img-top" alt="{{ project.title }}">
+                        <div class="overlay">
+                            <a href="{{ url_for('project_detail', id=project.id) }}" 
+                               class="btn btn-white">
+                                <i class="fas fa-eye me-2"></i>View Details
                             </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            {% if project.category %}
+                            <span class="badge bg-secondary">{{ project.category.name }}</span>
+                            {% endif %}
+                            <small class="text-muted">
+                                {{ project.created_at.strftime('%B %Y') }}
+                            </small>
+                        </div>
+                        
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ project.description|truncate(80) }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <a href="{{ url_for('project_detail', id=project.id) }}" 
+                               class="btn btn-primary btn-sm">
+                                Learn More
+                            </a>
+                            
+                            <div class="d-flex align-items-center text-muted">
+                                <small class="me-3">
+                                    <i class="fas fa-heart me-1"></i>{{ project.likes_count }}
+                                </small>
+                                <small>
+                                    <i class="fas fa-eye me-1"></i>{{ project.views_count }}
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-        <div class="text-center mt-4">
-            <a href="{{ url_for('projects') }}" class="btn btn-primary">
-                View All Projects <i class="fas fa-arrow-right ms-1"></i>
-            </a>
-        </div>
     </div>
 </section>
 {% endif %}
 
 <!-- Call to Action -->
-<section class="py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <h3 class="mb-4">Let's Connect</h3>
-                <p class="lead mb-4">Interested in collaboration or have a project in mind? I'd love to hear from you.</p>
-                <a href="{{ url_for('about') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-envelope me-2"></i>Get in Touch
-                </a>
-            </div>
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="h1 fw-bold mb-4">Let's Work Together</h2>
+        <p class="lead mb-4">
+            Interested in collaborating or learning more about my work? I'd love to hear from you.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ url_for('about') }}" class="btn btn-white btn-lg">
+                <i class="fas fa-user me-2"></i>Get to Know Me
+            </a>
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Join Community
+            </a>
+            {% endif %}
         </div>
     </div>
 </section>
+
+<!-- Custom CSS for Hero Section -->
+<style>
+.hero-svg {
+    animation: float 6s ease-in-out infinite;
+}
+
+.code-symbol {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    fill: var(--primary-color);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.btn-white {
+    background: white;
+    color: var(--primary-color);
+    border: none;
+    font-weight: 600;
+}
+
+.btn-white:hover {
+    background: var(--bg-tertiary);
+    color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.project-card {
+    transition: all var(--transition-normal);
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 2rem 0;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-svg {
+        width: 300px;
+        height: 300px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Enhanced project interactions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to project cards
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px)';
+            this.style.boxShadow = 'var(--shadow-xl)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.boxShadow = '';
+        });
+    });
+    
+    // Smooth scroll to sections
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

@@ -1,0 +1,57 @@
+Atualize o projeto Portfólio Digital Interativo com IA para implementar uma interface gráfica completa, moderna e profissional, levando em conta a teoria das cores e princípios de UI/UX para criar uma experiência imersiva.
+
+Diretrizes de Interface
+
+Design Moderno e Responsivo
+
+Utilizar TailwindCSS ou Bootstrap 5 para responsividade e estética.
+
+Layout mobile-first que se adapta perfeitamente a smartphones, tablets e desktops.
+
+Sistema de grid fluido com espaçamentos consistentes.
+
+Teoria das Cores
+
+Paleta harmoniosa baseada em cores análogas ou complementares para transmitir profissionalismo e confiança.
+
+Fundo neutro e elegante (ex.: branco, cinza claro ou degrade suave) para destacar o conteúdo.
+
+Cores de destaque (botões e links) com alto contraste e consistência em toda a interface.
+
+Personalização de Perfil
+
+Campo para upload de foto do usuário, com pré-visualização antes de salvar.
+
+Fotos exibidas em formato circular com borda sutil e sombra suave.
+
+Suporte a imagens otimizadas para carregamento rápido.
+
+Layout das Páginas
+
+Página inicial: Destaques dos projetos mais recentes ou mais curtidos, com cards interativos contendo imagem, título, descrição breve e botão “Ver Mais”.
+
+Página de projetos: Lista filtrável e pesquisável por categoria/tag, com animações suaves ao passar o mouse.
+
+Área de login e cadastro: Layout limpo, minimalista e com mensagens de feedback visuais (verde para sucesso, vermelho para erro).
+
+Área de administração: Painel com tabela de usuários, botões de ação claros, e indicadores visuais de status (ex.: ativo/inativo, admin/usuário).
+
+Experiência do Usuário (UX)
+
+Animações suaves para transições de página e interações (usar CSS transitions ou bibliotecas JS leves).
+
+Feedback visual instantâneo ao curtir, comentar ou salvar alterações.
+
+Uso de ícones vetoriais modernos (ex.: Heroicons ou FontAwesome) para facilitar a identificação das ações.
+
+Suporte a tema claro/escuro alternável pelo usuário.
+
+Acessibilidade
+
+Seguir diretrizes WCAG 2.1, garantindo contraste mínimo de 4.5:1.
+
+Elementos clicáveis com área adequada para toque em dispositivos móveis.
+
+Texto legível, fontes modernas e tamanho ajustável.
+
+Objetivo final: Criar uma interface visualmente marcante, funcional e acessível, que transmita profissionalismo e modernidade, transformando o portfólio digital em uma vitrine interativa de alto impacto, aproveitando ao máximo os recursos de design e usabilidade.

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-4">Welcome to My Digital Portfolio</h1>
+                <p class="lead mb-4">Explore my journey through innovative projects, creative solutions, and technical achievements. Discover the passion behind every line of code.</p>
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('projects') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-folder-open me-2"></i>View Projects
+                    </a>
+                    <a href="{{ url_for('about') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-user me-2"></i>About Me
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="text-center">
+                    <i class="fas fa-laptop-code fa-10x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Projects -->
+{% if featured_projects %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">
+            <i class="fas fa-star text-warning me-2"></i>Featured Projects
+        </h2>
+        <div class="row">
+            {% for project in featured_projects %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    {% if project.image_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
+                         class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" 
+                         style="height: 200px;">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        <p class="card-text flex-grow-1">{{ project.description[:150] }}{% if project.description|length > 150 %}...{% endif %}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted small">
+                                <i class="fas fa-eye me-1"></i>{{ project.views_count }}
+                                <i class="fas fa-heart ms-2 me-1"></i>{{ project.likes_count }}
+                            </div>
+                            <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-primary btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Recent Projects -->
+{% if recent_projects %}
+<section class="py-5 bg-body-secondary">
+    <div class="container">
+        <h2 class="text-center mb-5">
+            <i class="fas fa-clock me-2"></i>Recent Projects
+        </h2>
+        <div class="row">
+            {% for project in recent_projects %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    {% if project.image_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
+                         class="card-img-top" alt="{{ project.title }}" style="height: 180px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title">{{ project.title }}</h6>
+                        <p class="card-text small flex-grow-1">{{ project.description[:100] }}{% if project.description|length > 100 %}...{% endif %}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                {{ project.created_at.strftime('%b %d, %Y') }}
+                            </small>
+                            <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-outline-primary btn-sm">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('projects') }}" class="btn btn-primary">
+                View All Projects <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h3 class="mb-4">Let's Connect</h3>
+                <p class="lead mb-4">Interested in collaboration or have a project in mind? I'd love to hear from you.</p>
+                <a href="{{ url_for('about') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-envelope me-2"></i>Get in Touch
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

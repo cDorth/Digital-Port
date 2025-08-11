@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}About - Digital Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            {% if about_me %}
+            <div class="card">
+                {% if about_me.image_filename %}
+                <div class="text-center pt-4">
+                    <img src="{{ url_for('static', filename='uploads/' + about_me.image_filename) }}" 
+                         class="rounded-circle shadow" width="150" height="150" 
+                         style="object-fit: cover;" alt="Profile Picture">
+                </div>
+                {% endif %}
+                
+                <div class="card-body text-center">
+                    <h1 class="card-title">{{ about_me.title }}</h1>
+                    <div class="mt-4 text-start">
+                        {{ about_me.content|safe }}
+                    </div>
+                </div>
+                
+                {% if about_me.linkedin_url or about_me.github_url or about_me.email or about_me.phone %}
+                <div class="card-footer">
+                    <div class="row text-center">
+                        {% if about_me.email %}
+                        <div class="col-md-3 mb-3">
+                            <a href="mailto:{{ about_me.email }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-envelope me-1"></i>Email
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if about_me.phone %}
+                        <div class="col-md-3 mb-3">
+                            <a href="tel:{{ about_me.phone }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-phone me-1"></i>Call
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if about_me.linkedin_url %}
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ about_me.linkedin_url }}" target="_blank" class="btn btn-outline-info w-100">
+                                <i class="fab fa-linkedin me-1"></i>LinkedIn
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if about_me.github_url %}
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ about_me.github_url }}" target="_blank" class="btn btn-outline-dark w-100">
+                                <i class="fab fa-github me-1"></i>GitHub
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-user fa-5x text-muted mb-3"></i>
+                <h4>About Page Coming Soon</h4>
+                <p class="text-muted">The about section is being updated. Please check back later!</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home me-1"></i>Back to Home
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

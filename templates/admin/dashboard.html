@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Digital Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+            <hr>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ total_projects }}</h4>
+                            <span>Total Projects</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-folder fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ published_projects }}</h4>
+                            <span>Published</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-eye fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ total_comments }}</h4>
+                            <span>Comments</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-comments fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ total_likes }}</h4>
+                            <span>Likes</span>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-heart fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ url_for('admin_new_project') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>New Project
+                        </a>
+                        <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-1"></i>Manage Projects
+                        </a>
+                        <a href="{{ url_for('admin_categories') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-tags me-1"></i>Categories
+                        </a>
+                        <a href="{{ url_for('admin_about') }}" class="btn btn-outline-info">
+                            <i class="fas fa-user me-1"></i>About Me
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Recent Projects -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-folder me-2"></i>Recent Projects</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_projects %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Views</th>
+                                    <th>Likes</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in recent_projects %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if project.image_filename %}
+                                            <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
+                                                 class="rounded me-2" width="40" height="30" style="object-fit: cover;">
+                                            {% endif %}
+                                            <span>{{ project.title }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if project.is_published %}
+                                        <span class="badge bg-success">Published</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Draft</span>
+                                        {% endif %}
+                                        {% if project.is_featured %}
+                                        <span class="badge bg-warning">Featured</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ project.views_count }}</td>
+                                    <td>{{ project.likes_count }}</td>
+                                    <td>{{ project.created_at.strftime('%m/%d/%Y') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('admin_edit_project', id=project.id) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No projects yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Comments -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-comments me-2"></i>Recent Comments</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_comments %}
+                    {% for comment in recent_comments %}
+                    <div class="border-bottom pb-2 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <small class="fw-bold">{{ comment.author.username }}</small>
+                            <small class="text-muted">{{ comment.created_at.strftime('%m/%d') }}</small>
+                        </div>
+                        <p class="small mb-1">{{ comment.content[:60] }}{% if comment.content|length > 60 %}...{% endif %}</p>
+                        <small class="text-muted">on {{ comment.project.title }}</small>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted">No comments yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

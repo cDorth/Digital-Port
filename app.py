@@ -16,11 +16,11 @@ db = SQLAlchemy(model_class=Base)
 
 # Create the app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "e8accdaa813a19f37545bc7ddcec2fb95010b8f256d9faafc5d37a3b31256719")
+app.secret_key = os.environ.get("SESSION_SECRET") or "dev-secret-key-change-in-production"
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Configure the database - SQLite local
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+# Configure the database - PostgreSQL
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL") or "sqlite:///fallback.db"
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
@@ -47,8 +47,7 @@ with app.app_context():
     # Make sure to import the models here or their tables won't be created
     import models  # noqa: F401
     
-    # Drop all tables and recreate them to handle schema changes
-    db.drop_all()
+    # Create all tables if they don't exist
     db.create_all()
     
     # Create super admin user

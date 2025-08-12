@@ -1,5 +1,6 @@
 from flask import jsonify, request, current_app
-from models import Project, Skill, ProjectSkill, TimelineEvent, Recommendation, Tag, Category
+from flask_login import current_user, login_required
+from models import Project, Skill, ProjectSkill, TimelineEvent, Recommendation, Tag, Category, User
 from app import db
 import json
 from datetime import datetime, date
@@ -286,3 +287,23 @@ def init_api_routes(app):
         except Exception as e:
             current_app.logger.error(f"Skills comparison error: {str(e)}")
             return jsonify({'error': 'Failed to compare skills'}), 500
+
+    @app.route('/api/save-language-preference', methods=['POST'])
+    @login_required
+    def save_language_preference():
+        """Save user language preference"""
+        try:
+            data = request.get_json()
+            language = data.get('language')
+            
+            if language not in ['pt-BR', 'en']:
+                return jsonify({'error': 'Invalid language'}), 400
+            
+            current_user.preferred_language = language
+            db.session.commit()
+            
+            return jsonify({'success': True, 'language': language})
+            
+        except Exception as e:
+            current_app.logger.error(f"Language preference save error: {str(e)}")
+            return jsonify({'error': 'Failed to save language preference'}), 500

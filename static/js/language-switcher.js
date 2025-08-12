@@ -1,7 +1,9 @@
 // Language Switcher for Portuguese/English
 class LanguageSwitcher {
     constructor() {
-        this.currentLanguage = localStorage.getItem('language') || 'pt-BR';
+        // Check if user is authenticated and has a language preference
+        const userLang = document.body.dataset.userLanguage;
+        this.currentLanguage = userLang || localStorage.getItem('language') || 'pt-BR';
         this.translations = {};
         this.init();
     }
@@ -42,6 +44,9 @@ class LanguageSwitcher {
                 'subtitle_recent': 'Adições mais recentes ao meu portfólio',
                 'welcome_title': 'Bem-vindo ao Meu Portfólio Digital',
                 'welcome_subtitle': 'Apresentando criatividade, inovação e excelência técnica através de projetos e experiências cuidadosamente elaborados.',
+                'btn_view_projects': 'Ver Projetos',
+                'btn_about_me': 'Sobre Mim',
+                'label_featured_badge': 'Destaque',
                 'footer_copyright': 'Todos os direitos reservados.',
                 'footer_built_with': 'Construído com',
                 'search_placeholder': 'Buscar projetos...',
@@ -77,6 +82,9 @@ class LanguageSwitcher {
                 'subtitle_recent': 'Latest additions to my portfolio',
                 'welcome_title': 'Welcome to My Digital Portfolio',
                 'welcome_subtitle': 'Showcasing creativity, innovation, and technical excellence through carefully crafted projects and experiences.',
+                'btn_view_projects': 'View Projects',
+                'btn_about_me': 'About Me',
+                'label_featured_badge': 'Featured',
                 'footer_copyright': 'All rights reserved.',
                 'footer_built_with': 'Built with',
                 'search_placeholder': 'Search projects...',
@@ -121,6 +129,18 @@ class LanguageSwitcher {
         if (langButton) {
             langButton.innerHTML = `<i class="fas fa-globe me-1"></i>${language === 'pt-BR' ? 'PT' : 'EN'}`;
         }
+
+        // Save language preference for authenticated users
+        if (document.body.dataset.authenticated === 'true') {
+            fetch('/api/save-language-preference', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ language: language })
+            }).catch(err => console.log('Language preference not saved:', err));
+        }
     }
 
     applyLanguage() {
@@ -137,6 +157,18 @@ class LanguageSwitcher {
                 }
             }
         });
+
+        // Update document language attribute
+        document.documentElement.lang = this.currentLanguage;
+        
+        // Update page title
+        const titleElement = document.querySelector('title');
+        if (titleElement && titleElement.dataset.i18n) {
+            const titleKey = titleElement.dataset.i18n;
+            if (translations[titleKey]) {
+                titleElement.textContent = translations[titleKey];
+            }
+        }
     }
 
     t(key) {

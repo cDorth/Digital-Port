@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     is_super_admin = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean, default=True)
+    preferred_language = db.Column(db.String(10), default='pt-BR')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships

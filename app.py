@@ -16,7 +16,7 @@ db = SQLAlchemy(model_class=Base)
 
 # Create the app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET")
+app.secret_key = os.environ.get("SESSION_SECRET", "e8accdaa813a19f37545bc7ddcec2fb95010b8f256d9faafc5d37a3b31256719")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Configure the database
@@ -34,7 +34,7 @@ db.init_app(app)
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'auth.login'
+login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
 
@@ -61,12 +61,13 @@ with app.app_context():
         password_hash=generate_password_hash('Admin@123'),
         is_admin=True,
         is_super_admin=True,
-        is_active=True,
+        active=True,
         full_name='Super Administrator'
     )
     db.session.add(super_admin)
     
     # Log the super admin creation
+    from models import AdminLog
     log_entry = AdminLog(
         admin_id=None,  # System created
         action='create_super_admin',

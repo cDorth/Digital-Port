@@ -50,7 +50,7 @@ def admin_required(f):
         if not current_user.is_admin:
             return abort(403)
             
-        if not current_user.is_active:
+        if not current_user.active:
             return abort(403)
             
         return f(*args, **kwargs)
@@ -66,7 +66,7 @@ def super_admin_required(f):
         if not current_user.is_super_admin:
             return abort(403)
             
-        if not current_user.is_active:
+        if not current_user.active:
             return abort(403)
             
         return f(*args, **kwargs)

@@ -282,6 +282,8 @@ function initProjectCards() {
 
 // Like System with Animation
 function toggleLike(projectId) {
+    if (!projectId) return;
+    
     const button = document.querySelector(`[data-project-id="${projectId}"]`);
     if (!button) return;
     

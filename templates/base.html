@@ -42,6 +42,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('about') }}">Sobre</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('timeline') }}">Timeline</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('skills_comparator') }}">Comparador</a>
+                    </li>
                     {% if current_user.is_authenticated and current_user.is_admin %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -204,6 +210,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Modern Portfolio JS -->
     <script src="{{ url_for('static', filename='js/modern-portfolio.js') }}"></script>
+    <!-- Language Switcher -->
+    <script src="{{ url_for('static', filename='js/language-switcher.js') }}"></script>
+    <!-- AI Recommendations -->
+    <script src="{{ url_for('static', filename='js/ai-recommendations.js') }}"></script>
+    <!-- Career Timeline -->
+    <script src="{{ url_for('static', filename='js/career-timeline.js') }}"></script>
+    <!-- Skills Comparator -->
+    <script src="{{ url_for('static', filename='js/skills-comparator.js') }}"></script>
     
     {% block extra_js %}{% endblock %}
 </body>

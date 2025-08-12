@@ -1,6 +1,6 @@
 # Overview
 
-This is a digital portfolio web application built with Flask that allows users to showcase projects and achievements. The system features a public portfolio area for visitors to browse projects, an admin dashboard for portfolio management, and user authentication for interactions like commenting and liking projects. The application includes project categorization, image uploads, search functionality, and an about section.
+This is an advanced digital portfolio web application built with Flask that showcases projects and achievements with AI-powered features. The system includes a public portfolio area, admin dashboard, user authentication, and enhanced features like AI recommendations, interactive career timeline, skills comparator, and multilingual support (Portuguese/English). The application uses SQLite database and includes modern UI/UX with Bootstrap 5.
 
 # User Preferences
 

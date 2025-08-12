@@ -47,8 +47,7 @@ with app.app_context():
     # Make sure to import the models here or their tables won't be created
     import models  # noqa: F401
     
-    # Drop all tables and recreate them to handle new columns
-    db.drop_all()
+    # Create all tables
     db.create_all()
     
     # Create super admin user
@@ -75,5 +74,15 @@ with app.app_context():
         description='System created super administrator account'
     )
     db.session.add(log_entry)
-    db.session.commit()
-    logging.info("Super admin user created: admin@admin.com / Admin@123")
+    
+    # Try to commit, but handle case where user already exists
+    try:
+        db.session.commit()
+        logging.info("Super admin user created: admin@admin.com / Admin@123")
+    except Exception:
+        db.session.rollback()
+        logging.info("Super admin user already exists")
+
+# Import and initialize API routes
+from api_routes import init_api_routes
+init_api_routes(app)

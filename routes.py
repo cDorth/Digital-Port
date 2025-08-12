@@ -563,3 +563,14 @@ def page_not_found(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('errors/500.html'), 500
+
+# New feature routes
+@app.route('/timeline')
+def timeline():
+    """Career timeline page"""
+    return render_template('timeline.html')
+
+@app.route('/skills-comparator')
+def skills_comparator():
+    """Skills comparison tool"""
+    return render_template('skills-comparator.html')

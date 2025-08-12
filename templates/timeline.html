@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Timeline da Carreira{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Timeline Styles */
+.timeline-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.timeline-progress {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--bs-gray-300);
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.timeline-progress-bar {
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(to bottom, var(--bs-primary), var(--bs-success));
+    transition: height 0.5s ease;
+}
+
+.timeline-item {
+    position: relative;
+    width: 50%;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.timeline-item.timeline-animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.timeline-item.timeline-highlight {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+.timeline-left {
+    left: 0;
+    text-align: right;
+}
+
+.timeline-right {
+    left: 50%;
+    text-align: left;
+}
+
+.timeline-marker {
+    position: absolute;
+    top: 20px;
+    z-index: 5;
+}
+
+.timeline-left .timeline-marker {
+    right: -20px;
+}
+
+.timeline-right .timeline-marker {
+    left: -20px;
+}
+
+.timeline-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.timeline-date {
+    position: absolute;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: var(--bs-gray-600);
+    white-space: nowrap;
+    background: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--bs-gray-300);
+}
+
+.timeline-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.timeline-item:hover .timeline-card {
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    border-color: var(--bs-primary);
+}
+
+.timeline-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--bs-dark);
+    margin-bottom: 10px;
+}
+
+.timeline-description {
+    color: var(--bs-gray-600);
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.timeline-technologies .badge {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.timeline-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    backdrop-filter: blur(5px);
+}
+
+.timeline-modal-content {
+    background: white;
+    border-radius: 15px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80%;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.timeline-modal-header {
+    padding: 20px 20px 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.timeline-modal-header h4 {
+    margin: 0;
+    color: var(--bs-primary);
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--bs-gray-500);
+}
+
+.timeline-modal-body {
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .timeline-item {
+        width: 100%;
+        left: 0 !important;
+        text-align: left;
+        padding-left: 60px;
+    }
+    
+    .timeline-marker {
+        left: 10px !important;
+        right: auto !important;
+    }
+    
+    .timeline-progress {
+        left: 30px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div id="career-timeline">
+        <!-- Timeline will be populated by JavaScript -->
+    </div>
+</div>
+{% endblock %}

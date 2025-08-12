@@ -98,6 +98,60 @@ class AboutMe(db.Model):
     email = db.Column(db.String(120))
     phone = db.Column(db.String(20))
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# New models for enhanced functionality
+class Skill(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    level = db.Column(db.Integer, nullable=False, default=1)  # 1-10
+    experience_years = db.Column(db.Float, default=0)
+    description = db.Column(db.Text)
+    icon = db.Column(db.String(50))  # FontAwesome icon class
+    color = db.Column(db.String(7), default='#007bff')  # Hex color
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    project_skills = db.relationship('ProjectSkill', backref='skill', lazy=True)
+    
+    @property
+    def projects_count(self):
+        return ProjectSkill.query.filter_by(skill_id=self.id).count()
+
+class ProjectSkill(db.Model):
+    __tablename__ = 'project_skills'
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
+    skill_id = db.Column(db.Integer, db.ForeignKey('skill.id'), nullable=False)
+    proficiency_used = db.Column(db.Integer, default=5)  # 1-10 how much this skill was used
+    is_primary = db.Column(db.Boolean, default=False)  # Main technology used
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class TimelineEvent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    event_date = db.Column(db.Date, nullable=False)
+    event_type = db.Column(db.String(50), nullable=False)  # 'project', 'achievement', 'education', 'work'
+    importance = db.Column(db.Integer, default=1)  # 1-5, for ordering
+    image_filename = db.Column(db.String(255))
+    external_url = db.Column(db.String(500))
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))  # Optional link to project
+    event_metadata = db.Column(db.Text)  # JSON for additional data
+    is_published = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Recommendation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    source_project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
+    recommended_project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
+    similarity_score = db.Column(db.Float, default=0.0)  # 0-1 similarity score
+    recommendation_type = db.Column(db.String(50), default='content')  # 'content', 'tag', 'category'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    source_project = db.relationship('Project', foreign_keys=[source_project_id], backref='generated_recommendations')
+    recommended_project = db.relationship('Project', foreign_keys=[recommended_project_id], backref='received_recommendations')
 
 class AdminLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)

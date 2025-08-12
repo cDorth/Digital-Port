@@ -154,7 +154,7 @@
                     <h5><i class="fas fa-chart-bar me-2"></i>About Page Stats</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Last Updated:</strong><br>{{ about_me.updated_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                    <p><strong>Última Atualização:</strong><br>{{ about_me.updated_at.strftime('%d de %B de %Y às %H:%M') if about_me and about_me.updated_at else 'Não foi atualizado ainda' }}</p>
                     <p><strong>Contact Methods:</strong><br>
                         {% set contact_count = 0 %}
                         {% if about_me.email %}{% set contact_count = contact_count + 1 %}{% endif %}

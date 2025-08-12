@@ -34,19 +34,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">Início</a>
+                        <a class="nav-link" href="{{ url_for('index') }}" data-lang="nav_home">Início</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('projects') }}">Projetos</a>
+                        <a class="nav-link" href="{{ url_for('projects') }}" data-lang="nav_projects">Projetos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about') }}">Sobre</a>
+                        <a class="nav-link" href="{{ url_for('about') }}" data-lang="nav_about">Sobre</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('timeline') }}">Timeline</a>
+                        <a class="nav-link" href="{{ url_for('timeline') }}" data-lang="nav_timeline">Timeline</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('skills_comparator') }}">Comparador</a>
+                        <a class="nav-link" href="{{ url_for('skills_comparator') }}" data-lang="nav_comparator">Comparador</a>
                     </li>
                     {% if current_user.is_authenticated and current_user.is_admin %}
                     <li class="nav-item dropdown">
@@ -84,6 +84,7 @@
                     <div class="input-group">
                         <input class="form-control" type="search" 
                                name="query" placeholder="Buscar projetos..." 
+                               data-lang="search_placeholder"
                                value="{{ request.args.get('query', '') }}">
                         <button class="btn btn-outline-primary" type="submit">
                             <i class="fas fa-search"></i>
@@ -105,16 +106,16 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ url_for('logout') }}">
-                                <i class="fas fa-sign-out-alt me-2"></i>Sair
+                                <i class="fas fa-sign-out-alt me-2"></i><span data-lang="nav_logout">Sair</span>
                             </a></li>
                         </ul>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">Entrar</a>
+                        <a class="nav-link" href="{{ url_for('login') }}" data-lang="nav_login">Entrar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('register') }}">Cadastrar</a>
+                        <a class="nav-link" href="{{ url_for('register') }}" data-lang="nav_register">Cadastrar</a>
                     </li>
                     {% endif %}
                 </ul>

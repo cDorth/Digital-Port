@@ -20,6 +20,8 @@ class LanguageSwitcher {
                 'nav_projects': 'Projetos',
                 'nav_about': 'Sobre',
                 'nav_contact': 'Contato',
+                'nav_timeline': 'Timeline',
+                'nav_comparator': 'Comparador',
                 'nav_login': 'Entrar',
                 'nav_register': 'Cadastrar',
                 'nav_admin': 'Admin',
@@ -28,6 +30,8 @@ class LanguageSwitcher {
                 'btn_view_all': 'Ver Todos',
                 'btn_demo': 'Demo',
                 'btn_code': 'Código',
+                'btn_login': 'Entrar',
+                'btn_register': 'Cadastrar',
                 'label_featured': 'Destaque',
                 'label_projects': 'Projetos',
                 'label_featured_count': 'Destaques',
@@ -37,13 +41,22 @@ class LanguageSwitcher {
                 'title_recent_projects': 'Projetos Recentes',
                 'subtitle_recent': 'Adições mais recentes ao meu portfólio',
                 'welcome_title': 'Bem-vindo ao Meu Portfólio Digital',
-                'welcome_subtitle': 'Apresentando criatividade, inovação e excelência técnica através de projetos e experiências cuidadosamente elaborados.'
+                'welcome_subtitle': 'Apresentando criatividade, inovação e excelência técnica através de projetos e experiências cuidadosamente elaborados.',
+                'footer_copyright': 'Todos os direitos reservados.',
+                'footer_built_with': 'Construído com',
+                'search_placeholder': 'Buscar projetos...',
+                'timeline_title': 'Linha do Tempo da Carreira',
+                'timeline_subtitle': 'Acompanhe a evolução dos meus projetos e conquistas',
+                'comparator_title': 'Comparador de Habilidades',
+                'comparator_subtitle': 'Compare duas habilidades do meu portfólio'
             },
             'en': {
                 'nav_home': 'Home',
                 'nav_projects': 'Projects',
                 'nav_about': 'About',
                 'nav_contact': 'Contact',
+                'nav_timeline': 'Timeline',
+                'nav_comparator': 'Comparator',
                 'nav_login': 'Login',
                 'nav_register': 'Register',
                 'nav_admin': 'Admin',
@@ -52,6 +65,8 @@ class LanguageSwitcher {
                 'btn_view_all': 'View All',
                 'btn_demo': 'Demo',
                 'btn_code': 'Code',
+                'btn_login': 'Login',
+                'btn_register': 'Register',
                 'label_featured': 'Featured',
                 'label_projects': 'Projects',
                 'label_featured_count': 'Featured',
@@ -61,16 +76,23 @@ class LanguageSwitcher {
                 'title_recent_projects': 'Recent Projects',
                 'subtitle_recent': 'Latest additions to my portfolio',
                 'welcome_title': 'Welcome to My Digital Portfolio',
-                'welcome_subtitle': 'Showcasing creativity, innovation, and technical excellence through carefully crafted projects and experiences.'
+                'welcome_subtitle': 'Showcasing creativity, innovation, and technical excellence through carefully crafted projects and experiences.',
+                'footer_copyright': 'All rights reserved.',
+                'footer_built_with': 'Built with',
+                'search_placeholder': 'Search projects...',
+                'timeline_title': 'Career Timeline',
+                'timeline_subtitle': 'Follow the evolution of my projects and achievements',
+                'comparator_title': 'Skills Comparator',
+                'comparator_subtitle': 'Compare two skills from my portfolio'
             }
         };
     }
 
     createLanguageButton() {
-        const navbar = document.querySelector('.navbar-nav');
+        const navbar = document.querySelector('.navbar-nav:last-child');
         if (navbar) {
             const langButton = document.createElement('li');
-            langButton.className = 'nav-item dropdown';
+            langButton.className = 'nav-item dropdown me-2';
             langButton.innerHTML = `
                 <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-globe me-1"></i>${this.currentLanguage === 'pt-BR' ? 'PT' : 'EN'}
@@ -84,7 +106,8 @@ class LanguageSwitcher {
                     </a></li>
                 </ul>
             `;
-            navbar.appendChild(langButton);
+            // Insert before the first nav item (login/register or user menu)
+            navbar.insertBefore(langButton, navbar.firstChild);
         }
     }
 

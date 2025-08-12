@@ -47,7 +47,8 @@ with app.app_context():
     # Make sure to import the models here or their tables won't be created
     import models  # noqa: F401
     
-    # Create all tables
+    # Drop all tables and recreate them to handle schema changes
+    db.drop_all()
     db.create_all()
     
     # Create super admin user

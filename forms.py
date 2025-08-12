@@ -6,71 +6,71 @@ from models import Category
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
+    password = PasswordField('Senha', validators=[DataRequired()])
+    remember_me = BooleanField('Lembrar-me')
+    submit = SubmitField('Entrar')
 
 class RegisterForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=20)])
-    full_name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=100)])
+    username = StringField('Nome de Usuário', validators=[DataRequired(), Length(min=4, max=20)])
+    full_name = StringField('Nome Completo', validators=[DataRequired(), Length(min=2, max=100)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
-    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
+    password = PasswordField('Senha', validators=[DataRequired(), Length(min=6)])
+    password2 = PasswordField('Repetir Senha', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Cadastrar')
 
 class ProjectForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(max=200)])
-    description = TextAreaField('Description', validators=[DataRequired()])
-    content = TextAreaField('Content')
-    image = FileField('Project Image', validators=[FileAllowed(['jpg', 'png', 'gif', 'jpeg'], 'Images only!')])
-    demo_url = StringField('Demo URL', validators=[Optional(), URL()])
-    github_url = StringField('GitHub URL', validators=[Optional(), URL()])
-    category_id = SelectField('Category', coerce=int)
-    tags = StringField('Tags (comma-separated)')
-    is_published = BooleanField('Published')
-    is_featured = BooleanField('Featured')
-    submit = SubmitField('Save Project')
+    title = StringField('Título', validators=[DataRequired(), Length(max=200)])
+    description = TextAreaField('Descrição', validators=[DataRequired()])
+    content = TextAreaField('Conteúdo')
+    image = FileField('Imagem do Projeto', validators=[FileAllowed(['jpg', 'png', 'gif', 'jpeg'], 'Apenas imagens!')])
+    demo_url = StringField('URL de Demonstração', validators=[Optional(), URL()])
+    github_url = StringField('URL do GitHub', validators=[Optional(), URL()])
+    category_id = SelectField('Categoria', coerce=int)
+    tags = StringField('Tags (separadas por vírgula)')
+    is_published = BooleanField('Publicado')
+    is_featured = BooleanField('Em Destaque')
+    submit = SubmitField('Salvar Projeto')
     
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
         self.category_id.choices = [(c.id, c.name) for c in Category.query.all()]
 
 class CategoryForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), Length(max=100)])
-    description = TextAreaField('Description')
-    submit = SubmitField('Save Category')
+    name = StringField('Nome', validators=[DataRequired(), Length(max=100)])
+    description = TextAreaField('Descrição')
+    submit = SubmitField('Salvar Categoria')
 
 class CommentForm(FlaskForm):
-    content = TextAreaField('Comment', validators=[DataRequired(), Length(min=10, max=500)])
-    submit = SubmitField('Add Comment')
+    content = TextAreaField('Comentário', validators=[DataRequired(), Length(min=10, max=500)])
+    submit = SubmitField('Adicionar Comentário')
 
 class SearchForm(FlaskForm):
-    query = StringField('Search', validators=[DataRequired()])
-    submit = SubmitField('Search')
+    query = StringField('Buscar', validators=[DataRequired()])
+    submit = SubmitField('Pesquisar')
 
 class AboutMeForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(max=200)])
-    content = TextAreaField('Content', validators=[DataRequired()])
-    image = FileField('Profile Image', validators=[FileAllowed(['jpg', 'png', 'gif', 'jpeg'], 'Images only!')])
-    linkedin_url = StringField('LinkedIn URL', validators=[Optional(), URL()])
-    github_url = StringField('GitHub URL', validators=[Optional(), URL()])
+    title = StringField('Título', validators=[DataRequired(), Length(max=200)])
+    content = TextAreaField('Conteúdo', validators=[DataRequired()])
+    image = FileField('Foto de Perfil', validators=[FileAllowed(['jpg', 'png', 'gif', 'jpeg'], 'Apenas imagens!')])
+    linkedin_url = StringField('URL do LinkedIn', validators=[Optional(), URL()])
+    github_url = StringField('URL do GitHub', validators=[Optional(), URL()])
     email = StringField('Email', validators=[Optional(), Email()])
-    phone = StringField('Phone', validators=[Optional(), Length(max=20)])
-    submit = SubmitField('Save')
+    phone = StringField('Telefone', validators=[Optional(), Length(max=20)])
+    submit = SubmitField('Salvar')
 
 # Admin Forms
 class UserPromoteForm(FlaskForm):
-    user_id = HiddenField('User ID', validators=[DataRequired()])
-    submit = SubmitField('Promote to Admin')
+    user_id = HiddenField('ID do Usuário', validators=[DataRequired()])
+    submit = SubmitField('Promover a Admin')
 
 class UserDemoteForm(FlaskForm):
-    user_id = HiddenField('User ID', validators=[DataRequired()])
-    submit = SubmitField('Remove Admin')
+    user_id = HiddenField('ID do Usuário', validators=[DataRequired()])
+    submit = SubmitField('Remover Admin')
 
 class UserDeactivateForm(FlaskForm):
-    user_id = HiddenField('User ID', validators=[DataRequired()])
-    submit = SubmitField('Deactivate User')
+    user_id = HiddenField('ID do Usuário', validators=[DataRequired()])
+    submit = SubmitField('Desativar Usuário')
 
 class UserActivateForm(FlaskForm):
-    user_id = HiddenField('User ID', validators=[DataRequired()])
+    user_id = HiddenField('ID do Usuário', validators=[DataRequired()])
     submit = SubmitField('Activate User')

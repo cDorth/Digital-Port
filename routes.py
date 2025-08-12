@@ -99,9 +99,9 @@ def login():
             next_page = request.args.get('next')
             if not next_page or not next_page.startswith('/'):
                 next_page = url_for('index')
-            flash('Logged in successfully!', 'success')
+            flash('Login realizado com sucesso!', 'success')
             return redirect(next_page)
-        flash('Invalid email or password', 'danger')
+        flash('Email ou senha inválidos', 'danger')
     
     return render_template('login.html', form=form)
 
@@ -114,11 +114,11 @@ def register():
     if form.validate_on_submit():
         # Check if user already exists
         if User.query.filter_by(email=form.email.data).first():
-            flash('Email already registered', 'danger')
+            flash('Email já cadastrado', 'danger')
             return render_template('register.html', form=form)
         
         if User.query.filter_by(username=form.username.data).first():
-            flash('Username already taken', 'danger')
+            flash('Nome de usuário já em uso', 'danger')
             return render_template('register.html', form=form)
         
         user = User(
@@ -129,7 +129,7 @@ def register():
         )
         db.session.add(user)
         db.session.commit()
-        flash('Registration successful!', 'success')
+        flash('Cadastro realizado com sucesso!', 'success')
         return redirect(url_for('login'))
     
     return render_template('register.html', form=form)
@@ -138,7 +138,7 @@ def register():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out', 'info')
+    flash('Você foi desconectado', 'info')
     return redirect(url_for('index'))
 
 # Comment and Like routes
@@ -154,7 +154,7 @@ def add_comment(project_id):
         )
         db.session.add(comment)
         db.session.commit()
-        flash('Comment added successfully!', 'success')
+        flash('Comentário adicionado com sucesso!', 'success')
     return redirect(url_for('project_detail', id=project_id))
 
 @app.route('/toggle_like/<int:project_id>', methods=['POST'])

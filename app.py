@@ -19,8 +19,8 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "e8accdaa813a19f37545bc7ddcec2fb95010b8f256d9faafc5d37a3b31256719")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Configure the database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+# Configure the database - SQLite local
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,

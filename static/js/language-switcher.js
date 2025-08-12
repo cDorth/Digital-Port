@@ -53,7 +53,25 @@ class LanguageSwitcher {
                 'timeline_title': 'Linha do Tempo da Carreira',
                 'timeline_subtitle': 'Acompanhe a evolução dos meus projetos e conquistas',
                 'comparator_title': 'Comparador de Habilidades',
-                'comparator_subtitle': 'Compare duas habilidades do meu portfólio'
+                'comparator_subtitle': 'Compare duas habilidades do meu portfólio',
+                'btn_explore': 'Explorar Projeto',
+                'btn_view_all_projects': 'Ver Todos os Projetos',
+                'label_collaboration': 'Colaboração',
+                'cta_title_primary': 'Vamos Trabalhar',
+                'cta_title_accent': 'Juntos',
+                'cta_subtitle': 'Transforme suas ideias em realidade. Estou aqui para criar soluções inovadoras e impactantes que elevem seus projetos ao próximo nível.',
+                'feature_innovation': 'Inovação',
+                'feature_collaboration': 'Colaboração',
+                'feature_results': 'Resultados',
+                'btn_send_email': 'Enviar E-mail',
+                'btn_email_subtitle': 'Resposta em 24h',
+                'btn_schedule_meeting': 'Agendar Reunião',
+                'btn_meeting_subtitle': '30 min gratuitos',
+                'btn_connect_linkedin': 'Conectar LinkedIn',
+                'btn_linkedin_subtitle': 'Vamos nos conectar',
+                'trust_secure': '100% Seguro',
+                'trust_response': 'Resposta Rápida',
+                'trust_quality': 'Alta Qualidade'
             },
             'en': {
                 'nav_home': 'Home',
@@ -91,7 +109,25 @@ class LanguageSwitcher {
                 'timeline_title': 'Career Timeline',
                 'timeline_subtitle': 'Follow the evolution of my projects and achievements',
                 'comparator_title': 'Skills Comparator',
-                'comparator_subtitle': 'Compare two skills from my portfolio'
+                'comparator_subtitle': 'Compare two skills from my portfolio',
+                'btn_explore': 'Explore Project',
+                'btn_view_all_projects': 'View All Projects',
+                'label_collaboration': 'Collaboration',
+                'cta_title_primary': 'Let\'s Work',
+                'cta_title_accent': 'Together',
+                'cta_subtitle': 'Transform your ideas into reality. I\'m here to create innovative and impactful solutions that take your projects to the next level.',
+                'feature_innovation': 'Innovation',
+                'feature_collaboration': 'Collaboration',
+                'feature_results': 'Results',
+                'btn_send_email': 'Send Email',
+                'btn_email_subtitle': 'Response in 24h',
+                'btn_schedule_meeting': 'Schedule Meeting',
+                'btn_meeting_subtitle': '30 min free',
+                'btn_connect_linkedin': 'Connect LinkedIn',
+                'btn_linkedin_subtitle': 'Let\'s connect',
+                'trust_secure': '100% Secure',
+                'trust_response': 'Quick Response',
+                'trust_quality': 'High Quality'
             }
         };
     }

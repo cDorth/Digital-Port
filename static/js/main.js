@@ -213,14 +213,18 @@ document.addEventListener('DOMContentLoaded', function() {
     anchorLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
-            if (href !== '#') {
-                const target = document.querySelector(href);
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+            if (href && href !== '#' && href.length > 1) {
+                try {
+                    const target = document.querySelector(href);
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                } catch (err) {
+                    console.log('Invalid selector:', href);
                 }
             }
         });
@@ -263,41 +267,212 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Like functionality (if not already defined in template)
+// Enhanced Like functionality with real-time updates and duplicate prevention
 window.toggleLike = function(projectId) {
-    fetch(`/toggle_like/${projectId}`, {
+    const button = event.target.closest('button');
+    if (button && button.dataset.processing) {
+        return; // Prevent duplicate requests
+    }
+    
+    if (button) {
+        button.dataset.processing = 'true';
+        button.disabled = true;
+    }
+    
+    fetch(`/api/toggle-like/${projectId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            'X-Requested-With': 'XMLHttpRequest'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
-        const likeBtn = document.getElementById('like-btn');
-        const likesCount = document.getElementById('likes-count');
+        if (data.error) {
+            throw new Error(data.error);
+        }
         
-        if (likeBtn) {
+        // Update all like buttons for this project
+        const likeButtons = document.querySelectorAll(`[data-project-id="${projectId}"]`);
+        likeButtons.forEach(btn => {
+            const icon = btn.querySelector('i');
+            const countSpan = btn.querySelector('.like-count');
+            
             if (data.liked) {
-                likeBtn.className = 'btn btn-danger btn-lg';
-                likeBtn.innerHTML = '<i class="fas fa-heart me-1"></i><span>Unlike</span>';
+                btn.classList.remove('btn-outline-danger');
+                btn.classList.add('btn-danger');
+                if (icon) icon.className = 'fas fa-heart';
             } else {
-                likeBtn.className = 'btn btn-outline-danger btn-lg';
-                likeBtn.innerHTML = '<i class="fas fa-heart me-1"></i><span>Like</span>';
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-outline-danger');
+                if (icon) icon.className = 'far fa-heart';
             }
-        }
+            
+            if (countSpan) {
+                countSpan.textContent = data.likes_count;
+            }
+        });
         
-        if (likesCount) {
-            likesCount.textContent = data.likes_count;
-        }
+        // Update standalone like counts
+        const likeCounts = document.querySelectorAll(`.likes-count-${projectId}`);
+        likeCounts.forEach(count => {
+            count.textContent = data.likes_count;
+        });
         
-        showToast(data.liked ? 'Project liked!' : 'Like removed', 'success');
+        showToast(data.liked ? 'Projeto curtido!' : 'Curtida removida', 'success');
     })
     .catch(error => {
-        console.error('Error:', error);
-        showToast('An error occurred. Please try again.', 'error');
+        console.error('Like error:', error);
+        showToast('Erro ao curtir projeto. Tente novamente.', 'error');
+    })
+    .finally(() => {
+        if (button) {
+            delete button.dataset.processing;
+            button.disabled = false;
+        }
     });
 };
+
+// Comment functionality with validation and real-time updates
+window.submitComment = function(projectId) {
+    const form = document.getElementById('comment-form');
+    const contentTextarea = form.querySelector('textarea[name="content"]');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    const content = contentTextarea.value.trim();
+    
+    // Validation
+    if (!content) {
+        showToast('O comentário não pode estar vazio.', 'error');
+        contentTextarea.focus();
+        return;
+    }
+    
+    if (content.length > 1000) {
+        showToast('O comentário não pode ter mais de 1000 caracteres.', 'error');
+        contentTextarea.focus();
+        return;
+    }
+    
+    // Disable form during submission
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+    
+    fetch(`/api/add-comment/${projectId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ content: content })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        
+        // Clear form
+        contentTextarea.value = '';
+        
+        // Add comment to the top of the list
+        const commentsList = document.getElementById('comments-list');
+        const newCommentHtml = createCommentHtml(data.comment);
+        commentsList.insertAdjacentHTML('afterbegin', newCommentHtml);
+        
+        // Update comment count
+        const commentCounts = document.querySelectorAll(`.comments-count-${projectId}`);
+        commentCounts.forEach(count => {
+            count.textContent = data.total_comments;
+        });
+        
+        showToast('Comentário adicionado com sucesso!', 'success');
+    })
+    .catch(error => {
+        console.error('Comment error:', error);
+        showToast('Erro ao adicionar comentário. Tente novamente.', 'error');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Comentar';
+    });
+};
+
+// Helper function to create comment HTML
+function createCommentHtml(comment) {
+    const timeAgo = formatTimeAgo(comment.created_at);
+    return `
+        <div class="comment mb-3 p-3 border rounded">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-placeholder bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" 
+                         style="width: 40px; height: 40px;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-bold">${comment.author_name}</h6>
+                        <small class="text-muted">${timeAgo}</small>
+                    </div>
+                </div>
+            </div>
+            <p class="mb-0">${comment.content}</p>
+        </div>
+    `;
+}
+
+// Helper function to format time ago
+function formatTimeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+    
+    if (diffDays > 0) {
+        return `há ${diffDays} dia${diffDays > 1 ? 's' : ''}`;
+    } else if (diffHours > 0) {
+        return `há ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+    } else if (diffMinutes > 0) {
+        return `há ${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''}`;
+    } else {
+        return 'agora';
+    }
+}
+
+// Character count for comment textarea
+document.addEventListener('DOMContentLoaded', function() {
+    const commentTextareas = document.querySelectorAll('textarea[name="content"]');
+    commentTextareas.forEach(textarea => {
+        const maxLength = 1000;
+        let counter = textarea.parentElement.querySelector('.char-counter');
+        
+        if (!counter) {
+            counter = document.createElement('div');
+            counter.className = 'char-counter text-muted small mt-1';
+            textarea.parentElement.appendChild(counter);
+        }
+        
+        function updateCounter() {
+            const remaining = maxLength - textarea.value.length;
+            counter.textContent = `${textarea.value.length}/${maxLength} caracteres`;
+            counter.className = remaining < 100 ? 'char-counter text-danger small mt-1' : 'char-counter text-muted small mt-1';
+        }
+        
+        textarea.addEventListener('input', updateCounter);
+        updateCounter(); // Initial update
+    });
+});
 
 // Enhanced form validation
 window.validateForm = function(form) {

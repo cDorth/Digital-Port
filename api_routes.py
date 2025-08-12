@@ -307,3 +307,97 @@ def init_api_routes(app):
         except Exception as e:
             current_app.logger.error(f"Language preference save error: {str(e)}")
             return jsonify({'error': 'Failed to save language preference'}), 500
+
+    @app.route('/api/toggle-like/<int:project_id>', methods=['POST'])
+    @login_required
+    def api_toggle_like(project_id):
+        """Toggle like status for a project with duplicate prevention"""
+        try:
+            from models import Like, Project
+            
+            project = Project.query.get_or_404(project_id)
+            
+            # Check if user already liked this project
+            existing_like = Like.query.filter_by(
+                user_id=current_user.id,
+                project_id=project_id
+            ).first()
+            
+            if existing_like:
+                # Unlike - remove the like
+                db.session.delete(existing_like)
+                liked = False
+            else:
+                # Like - add new like
+                new_like = Like(user_id=current_user.id, project_id=project_id)
+                db.session.add(new_like)
+                liked = True
+            
+            db.session.commit()
+            
+            # Get updated like count
+            likes_count = Like.query.filter_by(project_id=project_id).count()
+            
+            return jsonify({
+                'success': True,
+                'liked': liked,
+                'likes_count': likes_count
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Toggle like error: {str(e)}")
+            return jsonify({'error': 'Erro ao processar curtida'}), 500
+
+    @app.route('/api/add-comment/<int:project_id>', methods=['POST'])
+    @login_required  
+    def api_add_comment(project_id):
+        """Add comment to project with validation"""
+        try:
+            from models import Comment, Project
+            
+            data = request.get_json()
+            content = data.get('content', '').strip()
+            
+            # Validation
+            if not content:
+                return jsonify({'error': 'Comentário não pode estar vazio'}), 400
+                
+            if len(content) > 1000:
+                return jsonify({'error': 'Comentário muito longo (máximo 1000 caracteres)'}), 400
+            
+            # Check if project exists
+            project = Project.query.get_or_404(project_id)
+            
+            # Create new comment
+            new_comment = Comment(
+                content=content,
+                user_id=current_user.id,
+                project_id=project_id
+            )
+            
+            db.session.add(new_comment)
+            db.session.commit()
+            
+            # Get total comments count
+            total_comments = Comment.query.filter_by(project_id=project_id).count()
+            
+            # Return comment data
+            comment_data = {
+                'id': new_comment.id,
+                'content': new_comment.content,
+                'author_name': current_user.full_name or current_user.username,
+                'created_at': new_comment.created_at.isoformat(),
+                'project_id': project_id
+            }
+            
+            return jsonify({
+                'success': True,
+                'comment': comment_data,
+                'total_comments': total_comments
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Add comment error: {str(e)}")
+            return jsonify({'error': 'Erro ao adicionar comentário'}), 500

@@ -72,52 +72,48 @@
             <!-- Comments Section -->
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-comments me-2"></i>Comments ({{ comments|length }})</h5>
+                    <h5><i class="fas fa-comments me-2"></i>Comentários (<span class="comments-count-{{ project.id }}">{{ comments|length }}</span>)</h5>
                 </div>
                 <div class="card-body">
                     {% if current_user.is_authenticated %}
                     <!-- Add Comment Form -->
-                    <form method="POST" action="{{ url_for('add_comment', project_id=project.id) }}" class="mb-4">
-                        {{ comment_form.hidden_tag() }}
+                    <form id="comment-form" class="mb-4" onsubmit="event.preventDefault(); submitComment({{ project.id }});">
                         <div class="mb-3">
-                            {{ comment_form.content(class="form-control", placeholder="Write your comment...") }}
-                            {% if comment_form.content.errors %}
-                                <div class="text-danger">
-                                    {% for error in comment_form.content.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                            <textarea name="content" class="form-control" placeholder="Escreva seu comentário..." maxlength="1000" rows="3" required></textarea>
                         </div>
-                        {{ comment_form.submit(class="btn btn-primary") }}
+                        <button type="submit" class="btn btn-primary">Comentar</button>
                     </form>
                     {% else %}
                     <div class="alert alert-info">
-                        <a href="{{ url_for('login') }}">Login</a> to leave a comment.
+                        <i class="fas fa-info-circle me-2"></i>
+                        <a href="{{ url_for('login') }}">Faça login</a> para deixar um comentário.
                     </div>
                     {% endif %}
                     
                     <!-- Comments List -->
-                    {% if comments %}
-                    <div class="comments-list">
-                        {% for comment in comments %}
-                        <div class="border-bottom pb-3 mb-3">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-user-circle fa-2x me-2 text-muted"></i>
-                                    <div>
-                                        <h6 class="mb-0">{{ comment.author.full_name or comment.author.username }}</h6>
-                                        <small class="text-muted">{{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                    <div id="comments-list">
+                        {% if comments %}
+                            {% for comment in comments %}
+                            <div class="comment mb-3 p-3 border rounded">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-placeholder bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" 
+                                             style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">{{ comment.author.full_name or comment.author.username }}</h6>
+                                            <small class="text-muted">{{ comment.created_at.strftime('%d/%m/%Y às %H:%M') }}</small>
+                                        </div>
                                     </div>
                                 </div>
+                                <p class="mb-0">{{ comment.content }}</p>
                             </div>
-                            <p class="mt-2 mb-0">{{ comment.content }}</p>
-                        </div>
-                        {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+                        {% endif %}
                     </div>
-                    {% else %}
-                    <p class="text-muted">No comments yet. Be the first to comment!</p>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -134,13 +130,24 @@
                         <span class="badge bg-info">{{ project.views_count }}</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span><i class="fas fa-heart me-2"></i>Likes</span>
-                        <span class="badge bg-danger" id="likes-count">{{ project.likes_count }}</span>
+                        <span><i class="fas fa-heart me-2"></i>Curtidas</span>
+                        <span class="badge bg-danger likes-count-{{ project.id }}">{{ project.likes_count }}</span>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-comments me-2"></i>Comments</span>
-                        <span class="badge bg-success">{{ comments|length }}</span>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-comments me-2"></i>Comentários</span>
+                        <span class="badge bg-success comments-count-{{ project.id }}">{{ comments|length }}</span>
                     </div>
+                    
+                    {% if current_user.is_authenticated %}
+                    <div class="d-grid">
+                        <button class="btn {% if user_liked %}btn-danger{% else %}btn-outline-danger{% endif %}" 
+                                data-project-id="{{ project.id }}"
+                                onclick="toggleLike({{ project.id }})">
+                            <i class="{% if user_liked %}fas{% else %}far{% endif %} fa-heart me-2"></i>
+                            <span class="like-count">{{ project.likes_count }}</span> Curtidas
+                        </button>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             

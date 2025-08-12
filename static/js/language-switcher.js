@@ -102,14 +102,14 @@ class LanguageSwitcher {
             const langButton = document.createElement('li');
             langButton.className = 'nav-item dropdown me-2';
             langButton.innerHTML = `
-                <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-globe me-1"></i>${this.currentLanguage === 'pt-BR' ? 'PT' : 'EN'}
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-                    <li><a class="dropdown-item" href="#" onclick="languageSwitcher.switchLanguage('pt-BR')">
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="languageSwitcher.switchLanguage('pt-BR')">
                         <i class="fas fa-flag me-2"></i>Português (BR)
                     </a></li>
-                    <li><a class="dropdown-item" href="#" onclick="languageSwitcher.switchLanguage('en')">
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="languageSwitcher.switchLanguage('en')">
                         <i class="fas fa-flag me-2"></i>English (US)
                     </a></li>
                 </ul>

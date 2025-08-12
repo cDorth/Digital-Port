@@ -152,13 +152,13 @@
                         Showcasing creativity, innovation, and technical excellence through carefully crafted digital experiences.
                     </p>
                     <div class="d-flex gap-2">
-                        <a href="#" class="btn btn-outline-primary btn-sm rounded-circle" style="width: 40px; height: 40px;">
+                        <a href="javascript:void(0)" class="btn btn-outline-primary btn-sm rounded-circle" style="width: 40px; height: 40px;">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="#" class="btn btn-outline-primary btn-sm rounded-circle" style="width: 40px; height: 40px;">
+                        <a href="javascript:void(0)" class="btn btn-outline-primary btn-sm rounded-circle" style="width: 40px; height: 40px;">
                             <i class="fab fa-linkedin"></i>
                         </a>
-                        <a href="#" class="btn btn-outline-primary btn-sm rounded-circle" style="width: 40px; height: 40px;">
+                        <a href="javascript:void(0)" class="btn btn-outline-primary btn-sm rounded-circle" style="width: 40px; height: 40px;">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -219,6 +219,120 @@
     <script src="{{ url_for('static', filename='js/career-timeline.js') }}"></script>
     <!-- Skills Comparator -->
     <script src="{{ url_for('static', filename='js/skills-comparator.js') }}"></script>
+    
+    <!-- Like and Comment Functions -->
+    <script>
+    function toggleLike(projectId) {
+        const button = document.querySelector(`button[data-project-id="${projectId}"]`);
+        const likeCount = button.querySelector('.like-count');
+        const icon = button.querySelector('i');
+        
+        fetch('/api/like_project', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ project_id: projectId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                likeCount.textContent = data.likes_count;
+                // Update all like count displays
+                document.querySelectorAll(`.likes-count-${projectId}`).forEach(el => {
+                    el.textContent = data.likes_count;
+                });
+                
+                // Toggle button state
+                if (data.liked) {
+                    button.classList.remove('btn-outline-danger');
+                    button.classList.add('btn-danger');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    button.classList.remove('btn-danger');
+                    button.classList.add('btn-outline-danger');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            } else {
+                alert(data.error || 'Erro ao curtir projeto');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erro ao conectar com servidor');
+        });
+    }
+    
+    function submitComment(projectId) {
+        const form = document.getElementById('comment-form');
+        const textarea = form.querySelector('textarea[name="content"]');
+        const content = textarea.value.trim();
+        
+        if (!content) {
+            alert('Por favor, escreva um comentário');
+            return;
+        }
+        
+        if (content.length > 1000) {
+            alert('Comentário muito longo (máximo 1000 caracteres)');
+            return;
+        }
+        
+        fetch('/api/add_comment_api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ 
+                project_id: projectId,
+                content: content
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Clear form
+                textarea.value = '';
+                
+                // Update comment count
+                document.querySelectorAll(`.comments-count-${projectId}`).forEach(el => {
+                    el.textContent = parseInt(el.textContent) + 1;
+                });
+                
+                // Add new comment to top of list
+                const commentsList = document.getElementById('comments-list');
+                const newComment = document.createElement('div');
+                newComment.className = 'comment mb-3 p-3 border rounded';
+                newComment.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-placeholder bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">${data.author_name}</h6>
+                                <small class="text-muted">agora</small>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mb-0">${data.content}</p>
+                `;
+                commentsList.insertBefore(newComment, commentsList.firstChild);
+            } else {
+                alert(data.error || 'Erro ao adicionar comentário');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erro ao conectar com servidor');
+        });
+    }
+    </script>
     
     {% block extra_js %}{% endblock %}
 </body>

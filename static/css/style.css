@@ -275,6 +275,11 @@ footer {
   color: #000 !important;
 }
 
+.about-content .card-title {
+  color: #222 !important;
+  font-weight: 700;
+}
+
 .about-content p {
   color: #111 !important;
   font-weight: 500;
@@ -295,9 +300,10 @@ footer {
   color: #000 !important;
 }
 
+.about-content h1,
 .about-content h2, 
 .about-content h3 {
-  color: #000 !important;
+  color: #222 !important;
   font-weight: 700;
 }
 

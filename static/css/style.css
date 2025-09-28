@@ -270,83 +270,114 @@ footer {
   color: #e9ecef;
 }
 
-/* About Page Styling - Força texto escuro no tema claro */
-.about-content,
-.about-content *,
+/* About Page Styling - Super força texto escuro no tema claro */
+body .about-content,
+body .about-content *,
+html body .about-content,
+html body .about-content *,
+.container .about-content,
+.container .about-content *,
 .card .about-content,
-.card .about-content * {
-  color: #212529 !important;
-}
-
-.about-content .card-title,
-.about-content h1,
-.about-content h2, 
-.about-content h3,
-.about-content h4,
-.about-content h5,
-.about-content h6 {
+.card .about-content *,
+.card-body.about-content,
+.card-body.about-content * {
   color: #000000 !important;
-  font-weight: 700;
+  text-shadow: none !important;
 }
 
-.about-content p,
-.about-content .card-body,
-.about-content ul li,
-.about-content div,
-.about-content span {
-  color: #212529 !important;
-  font-weight: 500;
-}
-
-.about-content .timeline-item strong,
-.about-content strong,
-.about-content b {
+/* Títulos com máxima especificidade */
+body .about-content .card-title,
+body .about-content h1,
+body .about-content h2, 
+body .about-content h3,
+body .about-content h4,
+body .about-content h5,
+body .about-content h6,
+html body .about-content .card-title,
+html body .about-content h1,
+html body .about-content h2, 
+html body .about-content h3,
+.container .card .about-content h1,
+.container .card .about-content .card-title {
   color: #000000 !important;
-  font-weight: 700;
+  font-weight: 700 !important;
+  text-shadow: none !important;
 }
 
-/* Seletores super específicos para tema claro */
-html:not([data-bs-theme="dark"]) .about-content,
-html:not([data-bs-theme="dark"]) .about-content *,
-[data-bs-theme="light"] .about-content,
-[data-bs-theme="light"] .about-content *,
+/* Parágrafos e textos com máxima especificidade */
+body .about-content p,
+body .about-content .card-body,
+body .about-content ul li,
+body .about-content div,
+body .about-content span,
+html body .about-content p,
+html body .about-content .card-body,
+html body .about-content ul li,
+html body .about-content div,
+html body .about-content span,
+.container .card .about-content p,
+.container .card .about-content div,
+.container .card-body.about-content p {
+  color: #000000 !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
+}
+
+/* Strong e bold com máxima especificidade */
+body .about-content .timeline-item strong,
+body .about-content strong,
+body .about-content b,
+html body .about-content strong,
+html body .about-content b,
+.container .card .about-content strong {
+  color: #000000 !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+/* Seletores extremamente específicos para tema claro */
+html:not([data-bs-theme="dark"]) body .about-content,
+html:not([data-bs-theme="dark"]) body .about-content *,
+[data-bs-theme="light"] body .about-content,
+[data-bs-theme="light"] body .about-content *,
 body:not([data-bs-theme="dark"]) .about-content,
-body:not([data-bs-theme="dark"]) .about-content * {
-  color: #212529 !important;
-}
-
-html:not([data-bs-theme="dark"]) .about-content .card-title,
-html:not([data-bs-theme="dark"]) .about-content h1,
-html:not([data-bs-theme="dark"]) .about-content h2,
-html:not([data-bs-theme="dark"]) .about-content h3,
-[data-bs-theme="light"] .about-content .card-title,
-[data-bs-theme="light"] .about-content h1,
-[data-bs-theme="light"] .about-content h2,
-[data-bs-theme="light"] .about-content h3 {
+body:not([data-bs-theme="dark"]) .about-content *,
+html[data-bs-theme="light"] body .about-content,
+html[data-bs-theme="light"] body .about-content * {
   color: #000000 !important;
+  text-shadow: none !important;
 }
 
-html:not([data-bs-theme="dark"]) .about-content p,
-html:not([data-bs-theme="dark"]) .about-content .card-body,
-html:not([data-bs-theme="dark"]) .about-content ul li,
-html:not([data-bs-theme="dark"]) .about-content div,
-[data-bs-theme="light"] .about-content p,
-[data-bs-theme="light"] .about-content .card-body,
-[data-bs-theme="light"] .about-content ul li,
-[data-bs-theme="light"] .about-content div {
-  color: #212529 !important;
-}
-
-/* Força para elementos específicos da página sobre */
+/* Força total para card específico */
 .card-body.text-center.about-content,
 .card-body.text-center.about-content *,
 .card-body.about-content,
-.card-body.about-content * {
-  color: #212529 !important;
+.card-body.about-content *,
+body .card-body.about-content,
+body .card-body.about-content *,
+html body .card-body.about-content,
+html body .card-body.about-content * {
+  color: #000000 !important;
+  text-shadow: none !important;
 }
 
-.card-body.text-center.about-content h1,
-.card-body.about-content h1 {
+/* Override de classes Bootstrap específicas */
+.about-content.text-muted,
+.about-content .text-muted,
+.about-content.text-secondary,
+.about-content .text-secondary,
+body .about-content.text-muted,
+body .about-content .text-muted,
+body .about-content.text-secondary,
+body .about-content .text-secondary {
+  color: #000000 !important;
+}
+
+/* Força para qualquer elemento Bootstrap */
+.card .card-body.about-content .text-start,
+.card .card-body.about-content .text-start *,
+.card .card-body.about-content .mt-4,
+.card .card-body.about-content .mt-4 * {
   color: #000000 !important;
 }
 

@@ -270,6 +270,47 @@ footer {
   color: #e9ecef;
 }
 
+/* About Page Styling - SOLUÇÃO DEFINITIVA */
+
+/* Força texto preto SEMPRE no tema claro - independente do data-bs-theme */
+body .about-content,
+body .about-content *,
+body .about-content h1,
+body .about-content .card-title,
+body .about-content p,
+body .about-content div,
+body .about-content span,
+body .about-content strong,
+.card .card-body.about-content,
+.card .card-body.about-content *,
+.card .card-body.about-content h1,
+.card .card-body.about-content p,
+.card .card-body.about-content div {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Solução para TEMA CLARO específica */
+html[data-bs-theme="light"] .about-content,
+html[data-bs-theme="light"] .about-content *,
+html[data-bs-theme="light"] .card-body.about-content,
+html[data-bs-theme="light"] .card-body.about-content *,
+body[data-bs-theme="light"] .about-content,
+body[data-bs-theme="light"] .about-content *,
+[data-bs-theme="light"] .about-content,
+[data-bs-theme="light"] .about-content * {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* Override para classes Bootstrap específicas */
+[data-bs-theme="light"] .text-muted,
+body[data-bs-theme="light"] .text-muted,
+html[data-bs-theme="light"] .text-muted {
+  color: #000000 !important;
+}
+
 /* About Page Styling - FORÇA BRUTAL para texto preto no tema claro */
 
 /* Bootstrap Override - Máxima Especificidade Possível */

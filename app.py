@@ -21,10 +21,8 @@ if not app.secret_key:
     raise RuntimeError("SESSION_SECRET environment variable must be set")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Configure the database - SQLite (file-based, integrated with project files)
-import os
-db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'portfolio.db')
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+# Configure the database - PostgreSQL (integrated Replit database)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
@@ -86,28 +84,29 @@ with app.app_context():
                 if user_info:
                     username = user_info.get('login')
                     
-                    # Store encrypted credentials in database (if crypto available)
-                    try:
-                        if crypto_manager is not None:
-                            client.store_github_credentials(username, github_token)
-                            logging.info(f"GitHub credentials armazenadas para: {username}")
-                        else:
-                            logging.info(f"GitHub conectado para: {username} (sem criptografia)")
-                    except Exception as e:
-                        logging.warning(f"Aviso ao armazenar credenciais: {e}")
-                    
-                    # Perform initial sync of repositories
-                    try:
-                        sync_service = GitHubSyncService()
-                        logging.info(f"Iniciando sincronização de repositórios para {username}...")
+                    if username:  # Only proceed if username is not None
+                        # Store encrypted credentials in database (if crypto available)
+                        try:
+                            if crypto_manager is not None:
+                                client.store_github_credentials(username, github_token)
+                                logging.info(f"GitHub credentials armazenadas para: {username}")
+                            else:
+                                logging.info(f"GitHub conectado para: {username} (sem criptografia)")
+                        except Exception as e:
+                            logging.warning(f"Aviso ao armazenar credenciais: {e}")
                         
-                        success, message, repos_synced = sync_service.sync_user_repositories(username)
-                        if success:
-                            logging.info(f"✅ Sincronização concluída: {repos_synced} repositórios carregados")
-                        else:
-                            logging.warning(f"⚠️ Sincronização parcial: {message}")
-                    except Exception as sync_error:
-                        logging.error(f"Erro na sincronização: {sync_error}")
+                        # Perform initial sync of repositories
+                        try:
+                            sync_service = GitHubSyncService()
+                            logging.info(f"Iniciando sincronização de repositórios para {username}...")
+                            
+                            success, message, repos_synced = sync_service.sync_user_repositories(username)
+                            if success:
+                                logging.info(f"✅ Sincronização concluída: {repos_synced} repositórios carregados")
+                            else:
+                                logging.warning(f"⚠️ Sincronização parcial: {message}")
+                        except Exception as sync_error:
+                            logging.error(f"Erro na sincronização: {sync_error}")
                         
                 else:
                     logging.error("Não foi possível obter informações do usuário GitHub")

@@ -270,77 +270,84 @@ footer {
   color: #e9ecef;
 }
 
-/* About Page Styling */
-.about-content {
-  color: #333333 !important;
+/* About Page Styling - Força texto escuro no tema claro */
+.about-content,
+.about-content *,
+.card .about-content,
+.card .about-content * {
+  color: #212529 !important;
 }
 
-.about-content .card-title {
-  color: #1a1a1a !important;
-  font-weight: 700;
-}
-
-.about-content p {
-  color: #333333 !important;
-  font-weight: 500;
-}
-
-.about-content .timeline-item strong {
-  color: #1a1a1a !important;
-  font-weight: 600;
-}
-
-.about-content .timeline-item p {
-  color: #333333 !important;
-  line-height: 1.6;
-  font-weight: 500;
-}
-
-.about-content .card-body {
-  color: #333333 !important;
-}
-
+.about-content .card-title,
 .about-content h1,
 .about-content h2, 
-.about-content h3 {
-  color: #1a1a1a !important;
+.about-content h3,
+.about-content h4,
+.about-content h5,
+.about-content h6 {
+  color: #000000 !important;
   font-weight: 700;
 }
 
-.about-content .card-body ul li {
-  color: #333333 !important;
-  font-weight: 600;
+.about-content p,
+.about-content .card-body,
+.about-content ul li,
+.about-content div,
+.about-content span {
+  color: #212529 !important;
+  font-weight: 500;
 }
 
-.about-content .card-body ul li strong {
-  color: #1a1a1a !important;
+.about-content .timeline-item strong,
+.about-content strong,
+.about-content b {
+  color: #000000 !important;
   font-weight: 700;
 }
 
-/* Força cores mais escuras especificamente para tema claro */
+/* Seletores super específicos para tema claro */
 html:not([data-bs-theme="dark"]) .about-content,
-[data-bs-theme="light"] .about-content {
-  color: #333333 !important;
+html:not([data-bs-theme="dark"]) .about-content *,
+[data-bs-theme="light"] .about-content,
+[data-bs-theme="light"] .about-content *,
+body:not([data-bs-theme="dark"]) .about-content,
+body:not([data-bs-theme="dark"]) .about-content * {
+  color: #212529 !important;
 }
 
 html:not([data-bs-theme="dark"]) .about-content .card-title,
-[data-bs-theme="light"] .about-content .card-title,
 html:not([data-bs-theme="dark"]) .about-content h1,
 html:not([data-bs-theme="dark"]) .about-content h2,
 html:not([data-bs-theme="dark"]) .about-content h3,
+[data-bs-theme="light"] .about-content .card-title,
 [data-bs-theme="light"] .about-content h1,
 [data-bs-theme="light"] .about-content h2,
 [data-bs-theme="light"] .about-content h3 {
-  color: #1a1a1a !important;
+  color: #000000 !important;
 }
 
 html:not([data-bs-theme="dark"]) .about-content p,
 html:not([data-bs-theme="dark"]) .about-content .card-body,
 html:not([data-bs-theme="dark"]) .about-content ul li,
+html:not([data-bs-theme="dark"]) .about-content div,
 [data-bs-theme="light"] .about-content p,
 [data-bs-theme="light"] .about-content .card-body,
-[data-bs-theme="light"] .about-content ul li {
-  color: #333333 !important;
+[data-bs-theme="light"] .about-content ul li,
+[data-bs-theme="light"] .about-content div {
+  color: #212529 !important;
+}
+
+/* Força para elementos específicos da página sobre */
+.card-body.text-center.about-content,
+.card-body.text-center.about-content *,
+.card-body.about-content,
+.card-body.about-content * {
+  color: #212529 !important;
+}
+
+.card-body.text-center.about-content h1,
+.card-body.about-content h1 {
+  color: #000000 !important;
 }
 
 /* Dark mode adjustments for about page */

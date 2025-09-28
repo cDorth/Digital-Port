@@ -1,0 +1,71 @@
+Atualize o projeto Portfólio Digital Interativo com IA (backend 100% Python, SQLite integrado) com as seguintes melhorias e correções:
+
+1. Correção Funcional – Tela "Editar Sobre"
+
+Consertar a tela “Editar Sobre” para que funcione corretamente, permitindo ao proprietário atualizar seu texto de apresentação, imagem de perfil e dados adicionais.
+
+Implementar validação para evitar envio de campos vazios ou dados inválidos.
+
+Após salvar, atualizar imediatamente a visualização no frontend (sem precisar recarregar a página).
+
+2. Botão de Tradução Automática (PT-BR / EN)
+
+Criar um botão estilizado (seguindo o melhor design do sistema) para alternar o idioma de todo o sistema entre Português Brasil e Inglês.
+
+Implementar internacionalização (i18n) para todos os textos, labels, botões e mensagens.
+
+Salvar a preferência de idioma no perfil do usuário ou via cookies para visitantes.
+
+3. Recomendador Inteligente de Conteúdo
+
+Integrar um sistema de IA que analisa o projeto que o visitante está visualizando e sugere outros projetos relacionados automaticamente.
+
+Critérios de relação: tags, categorias, tecnologias usadas e similaridade de descrição (usando NLP).
+
+Mostrar sugestões como cards no final da página do projeto.
+
+4. Timeline Interativa da Carreira
+
+Criar uma linha do tempo animada exibindo projetos e conquistas em ordem cronológica.
+
+Cada marco deve ser clicável e mostrar detalhes, imagens e vídeos.
+
+Adicionar modo “auto-play” para apresentar a evolução de forma automática.
+
+5. Comparador de Habilidades
+
+Criar uma funcionalidade onde o visitante escolhe duas skills do portfólio.
+
+O sistema exibe projetos, métricas e resultados que comprovam sua proficiência em cada skill.
+
+Interface amigável e responsiva, com gráficos e indicadores visuais.
+
+6. Integração com GitHub e LinkedIn
+
+Conectar cada projeto ao repositório GitHub correspondente, exibindo commits recentes e link direto.
+
+Criar botão “Adicionar no LinkedIn” para que visitantes recomendem ou avaliem habilidades diretamente no seu perfil.
+
+7. Banco de Dados Integrado – SQLite
+
+Banco de dados único e centralizado em SQLite (database.db) com tabelas para: usuários, projetos, conquistas, curtidas, comentários, notificações, habilidades e integrações externas.
+
+Implementar migrations automáticas para evitar perda de dados em futuras atualizações.
+
+Garantir que todas as novas funcionalidades (recomendador, timeline, comparador de habilidades e integrações) estejam refletidas no banco de dados.
+
+8. Requisitos Técnicos
+
+Backend em Python (Flask ou FastAPI).
+
+Autenticação JWT segura.
+
+Internacionalização com suporte PT-BR e EN.
+
+Interface responsiva (TailwindCSS ou Bootstrap 5).
+
+requirements.txt atualizado com todas as bibliotecas usadas no projeto.
+
+Compatibilidade total com o Replit e SQLite local.
+
+Objetivo final: Corrigir problemas existentes, integrar novas funcionalidades inovadoras e garantir que o sistema seja moderno, acessível, multilíngue, responsivo e totalmente funcional, com banco de dados robusto e integrado.

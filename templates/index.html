@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block title %}Portfólio Digital - Moderno & Profissional{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6 hero-content">
+                <div class="mb-4">
+                    <h1 class="display-4 fw-bold mb-4" data-i18n="welcome_title">
+                        Bem-vindo ao Meu <span class="text-primary">Portfólio Digital</span>
+                    </h1>
+                    <p class="lead text-secondary mb-4" data-i18n="welcome_subtitle">
+                        Apresentando criatividade, inovação e excelência técnica através de projetos e experiências cuidadosamente elaborados.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="{{ url_for('projects') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-rocket me-2"></i><span data-i18n="btn_view_projects">Ver Projetos</span>
+                        </a>
+                        <a href="{{ url_for('about') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-user me-2"></i><span data-i18n="btn_about_me">Sobre Mim</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Stats Section -->
+                <div class="row g-4 mt-4">
+                    <div class="col-4">
+                        <div class="text-center">
+                            <div class="h3 fw-bold text-primary mb-1">{{ featured_projects|length + recent_projects|length }}</div>
+                            <small class="text-muted" data-i18n="label_projects">Projetos</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <div class="h3 fw-bold text-primary mb-1">{{ featured_projects|length }}</div>
+                            <small class="text-muted" data-i18n="label_featured">Destaques</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <div class="h3 fw-bold text-primary mb-1">{{ moment().format('YYYY') if moment else '2024' }}</div>
+                            <small class="text-muted" data-i18n="label_since">Desde</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 text-center">
+                <div class="position-relative">
+                    <div class="hero-image-container">
+                        <svg width="400" height="400" viewBox="0 0 400 400" class="hero-svg">
+                            <defs>
+                                <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:var(--primary-color);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:var(--secondary-color);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="200" cy="200" r="150" fill="url(#heroGradient)" opacity="0.1"/>
+                            <circle cx="200" cy="200" r="120" fill="none" stroke="url(#heroGradient)" stroke-width="2"/>
+                            <circle cx="200" cy="200" r="90" fill="none" stroke="url(#heroGradient)" stroke-width="2" opacity="0.5"/>
+                            
+                            <!-- Code symbols -->
+                            <text x="200" y="180" text-anchor="middle" class="code-symbol">&lt;/&gt;</text>
+                            <text x="160" y="220" text-anchor="middle" class="code-symbol">{}</text>
+                            <text x="240" y="220" text-anchor="middle" class="code-symbol">fn()</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Projects -->
+{% if featured_projects %}
+<section class="featured-projects-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-badge">
+                <i class="fas fa-star me-2"></i><span data-i18n="label_featured">Destaques</span>
+            </div>
+            <h2 class="display-5 fw-bold mb-3 section-title" data-i18n="title_featured_projects">Projetos em Destaque</h2>
+            <p class="lead text-muted mb-4" data-i18n="subtitle_featured">Destacando meus melhores trabalhos e inovações</p>
+            <div class="section-divider mx-auto"></div>
+        </div>
+        
+        <!-- Interactive Project Cards -->
+        <div class="projects-carousel-container">
+            <div class="row g-4 justify-content-center">
+                {% for project in featured_projects %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="featured-project-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                        <div class="card-inner">
+                            {% if project.image_filename %}
+                            <div class="project-image-container">
+                                <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
+                                     class="project-image" alt="{{ project.title }}" loading="lazy">
+                                <div class="image-overlay">
+                                    <div class="overlay-content">
+                                        <a href="{{ url_for('project_detail', id=project.id) }}" 
+                                           class="view-project-btn">
+                                            <i class="fas fa-arrow-right me-2"></i>
+                                            <span data-i18n="btn_explore">Explorar Projeto</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="project-badge">
+                                    <i class="fas fa-award me-1"></i><span data-i18n="label_featured_badge">Destaque</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="project-content">
+                                <div class="project-header">
+                                    <h3 class="project-title">{{ project.title }}</h3>
+                                    <div class="project-stats">
+                                        <span class="stat-item">
+                                            <i class="fas fa-eye"></i>{{ project.views_count }}
+                                        </span>
+                                        <span class="stat-item">
+                                            <i class="fas fa-heart"></i>{{ project.likes_count }}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <p class="project-description">{{ project.description|truncate(120) }}</p>
+                                
+                                {% if project.tags %}
+                                <div class="project-tags">
+                                    {% for tag in project.tags[:4] %}
+                                    <span class="project-tag"># {{ tag.name }}</span>
+                                    {% endfor %}
+                                    {% if project.tags|length > 4 %}
+                                    <span class="project-tag more-tags">+{{ project.tags|length - 4 }}</span>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                                
+                                <div class="project-actions">
+                                    <div class="action-buttons">
+                                        {% if project.demo_url %}
+                                        <a href="{{ project.demo_url }}" class="action-btn primary" target="_blank">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span data-i18n="btn_demo">Demo</span>
+                                        </a>
+                                        {% endif %}
+                                        {% if project.github_url %}
+                                        <a href="{{ project.github_url }}" class="action-btn secondary" target="_blank">
+                                            <i class="fab fa-github"></i>
+                                            <span data-i18n="btn_code">Code</span>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if current_user.is_authenticated %}
+                                    <button class="like-btn" onclick="toggleLike({{ project.id }})" data-project-id="{{ project.id }}">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{{ url_for('projects') }}" class="explore-all-btn">
+                <span data-i18n="btn_view_all_projects">Ver Todos os Projetos</span>
+                <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Recent Projects -->
+{% if recent_projects %}
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="h1 fw-bold" data-i18n="title_recent_projects">Projetos Recentes</h2>
+                <p class="lead text-muted mb-0" data-i18n="subtitle_recent">Adições mais recentes ao meu portfólio</p>
+            </div>
+            <a href="{{ url_for('projects') }}" class="btn btn-outline-primary">
+                <span data-i18n="btn_view_all">Ver Todos</span> <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="row g-4">
+            {% for project in recent_projects[:6] %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card project-card h-100">
+                    {% if project.image_filename %}
+                    <div class="position-relative overflow-hidden">
+                        <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
+                             class="card-img-top" alt="{{ project.title }}">
+                        <div class="overlay">
+                            <a href="{{ url_for('project_detail', id=project.id) }}" 
+                               class="btn btn-white">
+                                <i class="fas fa-eye me-2"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            {% if project.category %}
+                            <span class="badge bg-secondary">{{ project.category.name }}</span>
+                            {% endif %}
+                            <small class="text-muted">
+                                {{ project.created_at.strftime('%B %Y') }}
+                            </small>
+                        </div>
+                        
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ project.description|truncate(80) }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <a href="{{ url_for('project_detail', id=project.id) }}" 
+                               class="btn btn-primary btn-sm">
+                                Learn More
+                            </a>
+                            
+                            <div class="d-flex align-items-center text-muted">
+                                <small class="me-3">
+                                    <i class="fas fa-heart me-1"></i>{{ project.likes_count }}
+                                </small>
+                                <small>
+                                    <i class="fas fa-eye me-1"></i>{{ project.views_count }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Let's Work Together - Enhanced CTA Section -->
+<section class="collaboration-cta-section">
+    <div class="cta-background">
+        <div class="animated-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="floating-elements">
+                <div class="element element-1"><i class="fas fa-code"></i></div>
+                <div class="element element-2"><i class="fas fa-lightbulb"></i></div>
+                <div class="element element-3"><i class="fas fa-rocket"></i></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="cta-content">
+                    <div class="collaboration-badge">
+                        <i class="fas fa-handshake me-2"></i>
+                        <span data-i18n="label_collaboration">Colaboração</span>
+                    </div>
+                    
+                    <h2 class="cta-title">
+                        <span class="title-primary" data-i18n="cta_title_primary">Vamos Trabalhar</span>
+                        <span class="title-accent" data-i18n="cta_title_accent">Juntos</span>
+                    </h2>
+                    
+                    <p class="cta-subtitle" data-i18n="cta_subtitle">
+                        Transforme suas ideias em realidade. Estou aqui para criar soluções inovadoras 
+                        e impactantes que elevem seus projetos ao próximo nível.
+                    </p>
+                    
+                    <div class="cta-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <span data-i18n="feature_innovation">Inovação</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <span data-i18n="feature_collaboration">Colaboração</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <span data-i18n="feature_results">Resultados</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cta-actions">
+                        <a href="mailto:{{ about_me.email if about_me and about_me.email else 'contato@portfolio.com' }}" class="cta-btn primary-btn">
+                            <div class="btn-content">
+                                <div class="btn-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="btn-text">
+                                    <span class="btn-label" data-i18n="btn_send_email">Enviar E-mail</span>
+                                    <span class="btn-subtitle" data-i18n="btn_email_subtitle">Resposta em 24h</span>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <a href="https://calendly.com/portfolio" target="_blank" class="cta-btn secondary-btn">
+                            <div class="btn-content">
+                                <div class="btn-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="btn-text">
+                                    <span class="btn-label" data-i18n="btn_schedule_meeting">Agendar Reunião</span>
+                                    <span class="btn-subtitle" data-i18n="btn_meeting_subtitle">30 min gratuitos</span>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ about_me.linkedin_url if about_me and about_me.linkedin_url else 'https://www.linkedin.com/in/carlosdorth/' }}" target="_blank" class="cta-btn tertiary-btn">
+                            <div class="btn-content">
+                                <div class="btn-icon">
+                                    <i class="fab fa-linkedin"></i>
+                                </div>
+                                <div class="btn-text">
+                                    <span class="btn-label" data-i18n="btn_connect_linkedin">Conectar LinkedIn</span>
+                                    <span class="btn-subtitle" data-i18n="btn_linkedin_subtitle">Vamos nos conectar</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="trust-indicators">
+                        <div class="indicator">
+                            <i class="fas fa-shield-alt"></i>
+                            <span data-i18n="trust_secure">100% Seguro</span>
+                        </div>
+                        <div class="indicator">
+                            <i class="fas fa-clock"></i>
+                            <span data-i18n="trust_response">Resposta Rápida</span>
+                        </div>
+                        <div class="indicator">
+                            <i class="fas fa-star"></i>
+                            <span data-i18n="trust_quality">Alta Qualidade</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Custom CSS for Hero Section -->
+<style>
+.hero-svg {
+    animation: float 6s ease-in-out infinite;
+}
+
+.code-symbol {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    fill: var(--primary-color);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.btn-white {
+    background: white;
+    color: var(--primary-color);
+    border: none;
+    font-weight: 600;
+}
+
+.btn-white:hover {
+    background: var(--bg-tertiary);
+    color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.project-card {
+    transition: all var(--transition-normal);
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 2rem 0;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-svg {
+        width: 300px;
+        height: 300px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Enhanced project interactions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to project cards
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px)';
+            this.style.boxShadow = 'var(--shadow-xl)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.boxShadow = '';
+        });
+    });
+    
+    // Smooth scroll to sections
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

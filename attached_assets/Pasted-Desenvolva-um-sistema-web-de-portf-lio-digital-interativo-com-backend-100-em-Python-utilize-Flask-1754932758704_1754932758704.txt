@@ -1,0 +1,70 @@
+Desenvolva um sistema web de portfólio digital interativo, com backend 100% em Python (utilize Flask ou FastAPI), hospedado e funcional no Replit.
+
+O sistema terá três áreas principais:
+
+Área Administrativa (Proprietário do Portfólio)
+
+Cadastro, edição e exclusão de conquistas e projetos.
+
+Upload de imagens, vídeos e links de demonstração.
+
+Organização por categorias ou tags.
+
+Opção para publicar ou deixar como rascunho.
+
+Painel com estatísticas de visualizações, curtidas e comentários.
+
+Área Pública (Visitantes)
+
+Visualização de projetos e conquistas de forma responsiva e atrativa.
+
+Botão de curtir com contador em tempo real.
+
+Campo de comentários (apenas para usuários logados).
+
+Botão para compartilhar no LinkedIn com prévia personalizada usando a API oficial.
+
+Seção Sobre Mim com apresentação pessoal.
+
+Página inicial com destaques (últimos ou mais curtidos projetos).
+
+Área de Autenticação
+
+Cadastro e login de visitantes (nome, e-mail, senha hash).
+
+Recuperação de senha por e-mail.
+
+Perfis com foto e informações básicas.
+
+Funcionalidades Extras e Inovadoras
+
+Notificações em tempo real para o proprietário quando receber um comentário ou curtida (via WebSocket).
+
+Busca semântica com IA para encontrar projetos por tema ou descrição.
+
+Recomendações inteligentes de projetos para visitantes com base nos que eles visualizaram ou curtiram.
+
+Sistema de tags inteligentes: sugerir automaticamente tags para projetos usando NLP (Natural Language Processing).
+
+Exportar portfólio como PDF estilizado com todos os projetos e conquistas.
+
+API REST aberta (com autenticação JWT) para permitir que outros sistemas acessem os dados do portfólio.
+
+Regras e Padrões de Desenvolvimento
+
+Estrutura de código modular, seguindo boas práticas (separar rotas, serviços, modelos, etc.).
+
+Banco de Dados: PostgreSQL (SQLAlchemy ou Tortoise ORM).
+
+Autenticação JWT segura.
+
+Documentar todas as rotas com Swagger/OpenAPI.
+
+Interface web responsiva usando Bootstrap ou Tailwind (integrado via templates do Flask/FastAPI).
+
+Criar seed inicial com dados de exemplo para testes.
+
+Preparar para deploy no Replit com requirements.txt e configuração de inicialização.
+
+Garantir compatibilidade mobile-first.
+

@@ -1,0 +1,450 @@
+/* ======================================
+   PROFESSIONAL PROJECT CARDS
+   ====================================== */
+
+:root {
+  /* Professional Language Colors */
+  --lang-python: #3776AB;
+  --lang-javascript: #F7DF1E;
+  --lang-css: #264de4;
+  --lang-html: #e34c26;
+  --lang-typescript: #007ACC;
+  --lang-java: #f89820;
+  --lang-php: #777BB4;
+  --lang-ruby: #CC342D;
+  --lang-go: #00ADD8;
+  --lang-csharp: #239120;
+  --lang-rust: #000000;
+  --lang-swift: #FA7343;
+  
+  /* Professional Colors */
+  --card-bg-light: #ffffff;
+  --card-bg-dark: #1e1e2e;
+  --text-primary-light: #2d3748;
+  --text-primary-dark: #f7fafc;
+  --text-secondary-light: #4a5568;
+  --text-secondary-dark: #cbd5e1;
+  --text-muted-light: #718096;
+  --text-muted-dark: #94a3b8;
+  --border-light: #e2e8f0;
+  --border-dark: #374151;
+  
+  /* Shadows */
+  --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-hover-light: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-hover-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  
+  /* Typography */
+  --font-professional: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ======================================
+   BASE GRID LAYOUT
+   ====================================== */
+
+.professional-projects-container {
+  padding: 2rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.professional-grid {
+  display: grid;
+  gap: 1.5rem;
+  animation: fadeInGrid 0.8s ease-out;
+}
+
+/* Desktop → 3 colunas */
+@media (min-width: 1024px) {
+  .professional-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Tablet → 2 colunas */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .professional-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Mobile → 1 coluna */
+@media (max-width: 767px) {
+  .professional-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .professional-projects-container {
+    padding: 1rem;
+  }
+}
+
+/* ======================================
+   PROFESSIONAL CARD STRUCTURE
+   ====================================== */
+
+.professional-card {
+  background: var(--card-bg-light);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-light);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  animation: cardFadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+/* Dark mode */
+[data-theme="dark"] .professional-card {
+  background: var(--card-bg-dark);
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-dark);
+  color: var(--text-primary-dark);
+}
+
+/* Staggered animation */
+.professional-card:nth-child(1) { animation-delay: 0.1s; }
+.professional-card:nth-child(2) { animation-delay: 0.2s; }
+.professional-card:nth-child(3) { animation-delay: 0.3s; }
+.professional-card:nth-child(4) { animation-delay: 0.4s; }
+.professional-card:nth-child(5) { animation-delay: 0.5s; }
+.professional-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* Hover effects */
+.professional-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover-light);
+}
+
+[data-theme="dark"] .professional-card:hover {
+  box-shadow: var(--shadow-hover-dark);
+}
+
+/* ======================================
+   CARD HEADER
+   ====================================== */
+
+.card-header {
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+[data-theme="dark"] .card-header {
+  border-bottom-color: var(--border-dark);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.repo-icon {
+  font-size: 1.125rem;
+  color: var(--text-muted-light);
+}
+
+[data-theme="dark"] .repo-icon {
+  color: var(--text-muted-dark);
+}
+
+.project-title {
+  font-family: var(--font-professional);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary-light);
+  margin: 0;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .project-title {
+  color: var(--text-primary-dark);
+}
+
+.fork-badge {
+  background: #f59e0b;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* ======================================
+   CARD BODY
+   ====================================== */
+
+.card-body {
+  padding: 0 1.5rem 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card-description {
+  color: var(--text-secondary-light);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  flex-grow: 1;
+  margin: 0;
+}
+
+[data-theme="dark"] .card-description {
+  color: var(--text-secondary-dark);
+}
+
+.card-description.no-description {
+  color: var(--text-muted-light);
+  font-style: italic;
+}
+
+[data-theme="dark"] .card-description.no-description {
+  color: var(--text-muted-dark);
+}
+
+/* ======================================
+   LANGUAGE BADGES
+   ====================================== */
+
+.language-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.language-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.language-badge:hover {
+  filter: brightness(1.1);
+}
+
+/* Language-specific colors */
+.language-badge.python { background-color: var(--lang-python); }
+.language-badge.javascript { background-color: var(--lang-javascript); color: #2d3748; }
+.language-badge.css { background-color: var(--lang-css); }
+.language-badge.html { background-color: var(--lang-html); }
+.language-badge.typescript { background-color: var(--lang-typescript); }
+.language-badge.java { background-color: var(--lang-java); }
+.language-badge.php { background-color: var(--lang-php); }
+.language-badge.ruby { background-color: var(--lang-ruby); }
+.language-badge.go { background-color: var(--lang-go); }
+.language-badge.csharp { background-color: var(--lang-csharp); }
+.language-badge.rust { background-color: var(--lang-rust); }
+.language-badge.swift { background-color: var(--lang-swift); }
+.language-badge.default { background-color: #6b7280; }
+
+/* ======================================
+   STATISTICS
+   ====================================== */
+
+.card-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+[data-theme="dark"] .card-stats {
+  border-color: var(--border-dark);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--text-muted-light);
+  font-size: 0.875rem;
+}
+
+[data-theme="dark"] .stat-item {
+  color: var(--text-muted-dark);
+}
+
+.stat-icon {
+  font-size: 0.875rem;
+}
+
+.stat-icon.star { color: #fbbf24; }
+.stat-icon.fork { color: #6b7280; }
+
+/* ======================================
+   ACTION BUTTONS
+   ====================================== */
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-github {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--text-muted-light);
+  border-radius: 0.5rem;
+  color: var(--text-primary-light);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+[data-theme="dark"] .btn-github {
+  border-color: var(--text-muted-dark);
+  color: var(--text-primary-dark);
+}
+
+.btn-github:hover {
+  background: var(--text-primary-light);
+  color: white;
+  border-color: var(--text-primary-light);
+}
+
+[data-theme="dark"] .btn-github:hover {
+  background: var(--text-primary-dark);
+  color: var(--card-bg-dark);
+  border-color: var(--text-primary-dark);
+}
+
+.btn-demo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #10b981;
+  border-radius: 0.5rem;
+  color: #10b981;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.btn-demo:hover {
+  background: #10b981;
+  color: white;
+}
+
+/* ======================================
+   FOOTER
+   ====================================== */
+
+.card-footer {
+  padding: 0.75rem 0 0;
+  color: var(--text-muted-light);
+  font-size: 0.75rem;
+  border-top: 1px solid var(--border-light);
+  margin-top: auto;
+}
+
+[data-theme="dark"] .card-footer {
+  color: var(--text-muted-dark);
+  border-top-color: var(--border-dark);
+}
+
+/* ======================================
+   ANIMATIONS
+   ====================================== */
+
+@keyframes fadeInGrid {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ======================================
+   SECTION TITLE
+   ====================================== */
+
+.professional-section-title {
+  font-family: var(--font-professional);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary-light);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+[data-theme="dark"] .professional-section-title {
+  color: var(--text-primary-dark);
+}
+
+.professional-section-title i {
+  color: var(--text-muted-light);
+}
+
+[data-theme="dark"] .professional-section-title i {
+  color: var(--text-muted-dark);
+}
+
+/* ======================================
+   RESPONSIVE ADJUSTMENTS
+   ====================================== */
+
+@media (max-width: 640px) {
+  .card-header {
+    padding: 1rem 1.25rem 0.75rem;
+  }
+  
+  .card-body {
+    padding: 0 1.25rem 1.25rem;
+  }
+  
+  .project-title {
+    font-size: 1rem;
+  }
+  
+  .card-stats {
+    gap: 0.75rem;
+  }
+  
+  .stat-item {
+    font-size: 0.8rem;
+  }
+}

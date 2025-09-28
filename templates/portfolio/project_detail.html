@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} - Digital Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Project Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('projects') }}">Projects</a></li>
+                    <li class="breadcrumb-item active">{{ project.title }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Project Image -->
+            {% if project.image_filename %}
+            <div class="mb-4">
+                <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
+                     class="img-fluid rounded shadow" alt="{{ project.title }}">
+            </div>
+            {% endif %}
+            
+            <!-- Project Info -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h1 class="card-title">{{ project.title }}</h1>
+                    
+                    <div class="d-flex flex-wrap gap-3 mb-3">
+                        {% if project.category %}
+                        <span class="badge bg-primary">{{ project.category.name }}</span>
+                        {% endif %}
+                        
+                        {% for tag in project.tags %}
+                        <span class="badge bg-secondary">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                    
+                    <p class="lead">{{ project.description }}</p>
+                    
+                    {% if project.content %}
+                    <div class="project-content">
+                        {{ project.content|safe }}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Project Links -->
+                    {% if project.demo_url or project.github_url %}
+                    <div class="d-flex gap-2 mt-4">
+                        {% if project.demo_url %}
+                        <a href="{{ project.demo_url }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>Live Demo
+                        </a>
+                        {% endif %}
+                        
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" target="_blank" class="btn btn-outline-dark">
+                            <i class="fab fa-github me-1"></i>View Code
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-comments me-2"></i>Comentários (<span class="comments-count-{{ project.id }}">{{ comments|length }}</span>)</h5>
+                </div>
+                <div class="card-body">
+                    {% if current_user.is_authenticated %}
+                    <!-- Add Comment Form -->
+                    <form id="comment-form" class="mb-4" onsubmit="event.preventDefault(); submitComment({{ project.id }});">
+                        <div class="mb-3">
+                            <textarea name="content" class="form-control" placeholder="Escreva seu comentário..." maxlength="1000" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Comentar</button>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <a href="{{ url_for('login') }}">Faça login</a> para deixar um comentário.
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Comments List -->
+                    <div id="comments-list">
+                        {% if comments %}
+                            {% for comment in comments %}
+                            <div class="comment mb-3 p-3 border rounded">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-placeholder bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" 
+                                             style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">{{ comment.author.full_name or comment.author.username }}</h6>
+                                            <small class="text-muted">{{ comment.created_at.strftime('%d/%m/%Y às %H:%M') }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mb-0">{{ comment.content }}</p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Project Stats -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Project Stats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-eye me-2"></i>Views</span>
+                        <span class="badge bg-info">{{ project.views_count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-heart me-2"></i>Curtidas</span>
+                        <span class="badge bg-danger likes-count-{{ project.id }}">{{ project.likes_count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-comments me-2"></i>Comentários</span>
+                        <span class="badge bg-success comments-count-{{ project.id }}">{{ comments|length }}</span>
+                    </div>
+                    
+                    {% if current_user.is_authenticated %}
+                    <div class="d-grid">
+                        <button class="btn {% if user_liked %}btn-danger{% else %}btn-outline-danger{% endif %}" 
+                                data-project-id="{{ project.id }}"
+                                onclick="toggleLike({{ project.id }})">
+                            <i class="{% if user_liked %}fas{% else %}far{% endif %} fa-heart me-2"></i>
+                            <span class="like-count">{{ project.likes_count }}</span> Curtidas
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Like Button -->
+            {% if current_user.is_authenticated %}
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <button id="like-btn" class="btn btn-{{ 'danger' if user_liked else 'outline-danger' }} btn-lg">
+                        <i class="fas fa-heart me-1"></i>
+                        <span>{{ 'Unlike' if user_liked else 'Like' }}</span>
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Share -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-share me-2"></i>Share</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url }}" 
+                           target="_blank" class="btn btn-outline-primary">
+                            <i class="fab fa-linkedin me-1"></i>Share on LinkedIn
+                        </a>
+                        <button class="btn btn-outline-secondary" onclick="copyToClipboard('{{ request.url }}')">
+                            <i class="fas fa-link me-1"></i>Copy Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project Info -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-info me-2"></i>Project Info</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Created:</strong><br>{{ project.created_at.strftime('%B %d, %Y') }}</p>
+                    {% if project.updated_at != project.created_at %}
+                    <p><strong>Updated:</strong><br>{{ project.updated_at.strftime('%B %d, %Y') }}</p>
+                    {% endif %}
+                    {% if project.category %}
+                    <p><strong>Category:</strong><br>{{ project.category.name }}</p>
+                    {% endif %}
+                    {% if project.tags %}
+                    <p><strong>Tags:</strong><br>
+                        {% for tag in project.tags %}
+                        <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                        {% endfor %}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Like functionality
+{% if current_user.is_authenticated %}
+document.getElementById('like-btn').addEventListener('click', function() {
+    fetch('{{ url_for("toggle_like", project_id=project.id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const btn = document.getElementById('like-btn');
+        const likesCount = document.getElementById('likes-count');
+        
+        if (data.liked) {
+            btn.className = 'btn btn-danger btn-lg';
+            btn.innerHTML = '<i class="fas fa-heart me-1"></i><span>Unlike</span>';
+        } else {
+            btn.className = 'btn btn-outline-danger btn-lg';
+            btn.innerHTML = '<i class="fas fa-heart me-1"></i><span>Like</span>';
+        }
+        
+        likesCount.textContent = data.likes_count;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+{% endif %}
+
+// Copy to clipboard function
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Show success message
+        const toast = document.createElement('div');
+        toast.className = 'toast show position-fixed top-0 end-0 m-3';
+        toast.innerHTML = `
+            <div class="toast-body">
+                Link copied to clipboard!
+            </div>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    });
+}
+</script>
+{% endblock %}

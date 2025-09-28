@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}GitHub Sync - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fab fa-github me-2"></i>GitHub Sync</h2>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sync Status Card -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-sync-alt me-2"></i>Sync Status</h5>
+                </div>
+                <div class="card-body">
+                    {% if last_sync %}
+                    <div class="mb-3">
+                        <strong>Last Sync:</strong> {{ last_sync.started_at.strftime('%B %d, %Y at %I:%M %p') }}<br>
+                        <strong>Status:</strong> 
+                        {% if last_sync.status == 'success' %}
+                        <span class="badge bg-success">{{ last_sync.status.title() }}</span>
+                        {% elif last_sync.status == 'error' %}
+                        <span class="badge bg-danger">{{ last_sync.status.title() }}</span>
+                        {% else %}
+                        <span class="badge bg-warning">{{ last_sync.status.title() }}</span>
+                        {% endif %}
+                        <br>
+                        <strong>Repositories Synced:</strong> {{ last_sync.repositories_synced }}<br>
+                        {% if last_sync.duration_seconds %}
+                        <strong>Duration:</strong> {{ "%.1f"|format(last_sync.duration_seconds) }} seconds
+                        {% endif %}
+                    </div>
+                    {% if last_sync.error_message %}
+                    <div class="alert alert-warning">
+                        <strong>Error:</strong> {{ last_sync.error_message }}
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <p class="text-muted">No sync has been performed yet.</p>
+                    {% endif %}
+                    
+                    <form method="POST" class="mt-3">
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Sincronização:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sync_type" value="authenticated" id="sync_auth" checked>
+                                <label class="form-check-label" for="sync_auth">
+                                    Autenticada (repositórios privados + públicos)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sync_type" value="public" id="sync_public">
+                                <label class="form-check-label" for="sync_public">
+                                    Pública (apenas repositórios públicos)
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3" id="username_input" style="display: none;">
+                            <label for="username" class="form-label">Nome de usuário GitHub:</label>
+                            <input type="text" class="form-control" name="username" id="username" placeholder="Ex: octocat">
+                            <small class="form-text text-muted">Para sincronização pública, você pode inserir qualquer nome de usuário</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sync-alt me-1"></i>Sync Now
+                        </button>
+                    </form>
+                    
+                    <script>
+                    document.getElementById('sync_public').addEventListener('change', function() {
+                        document.getElementById('username_input').style.display = this.checked ? 'block' : 'none';
+                    });
+                    document.getElementById('sync_auth').addEventListener('change', function() {
+                        document.getElementById('username_input').style.display = this.checked ? 'none' : 'block';
+                    });
+                    </script>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h3 class="text-primary">{{ total_repos }}</h3>
+                            <p class="text-muted mb-0">Total Repositories</p>
+                        </div>
+                        <div class="col-6">
+                            <h3 class="text-success">{{ all_languages|length }}</h3>
+                            <p class="text-muted mb-0">Programming Languages</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Languages Overview -->
+    {% if all_languages %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-code me-2"></i>Programming Languages</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for lang in all_languages[:12] %}
+                        <div class="col-md-2 col-sm-4 col-6 mb-2">
+                            <span class="badge bg-primary me-1">{{ lang.language }}</span>
+                            <small class="text-muted">({{ lang.repository_count }})</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Repositories -->
+    {% if github_repos %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fab fa-github me-2"></i>Recent Repositories</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Repository</th>
+                                    <th>Description</th>
+                                    <th>Language</th>
+                                    <th>Stars</th>
+                                    <th>Last Update</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for repo in github_repos %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ repo.name }}</strong>
+                                        {% if repo.is_fork %}
+                                        <span class="badge bg-info ms-1">Fork</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>{{ repo.description[:80] if repo.description else 'No description' }}</small>
+                                    </td>
+                                    <td>
+                                        {% if repo.language %}
+                                        <span class="badge bg-secondary">{{ repo.language }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ repo.stargazers_count }}</td>
+                                    <td>
+                                        {% if repo.pushed_at %}
+                                        {{ repo.pushed_at.strftime('%m/%d/%Y') }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ repo.html_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fab fa-github"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

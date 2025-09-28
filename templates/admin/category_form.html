@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-tag me-2"></i>{{ title }}</h2>
+                <a href="{{ url_for('admin_categories') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Categories
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.name.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows="4") }}
+                            {% if form.description.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.description.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Optional: Describe what kind of projects belong to this category.</small>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('admin_categories') }}" class="btn btn-secondary">Cancel</a>
+                            {% if category %}
+                            <button type="button" class="btn btn-danger ms-auto" 
+                                    onclick="if(confirm('Are you sure you want to delete this category? This will remove it from all projects.')) { 
+                                        document.getElementById('delete-form').submit(); 
+                                    }">
+                                <i class="fas fa-trash me-1"></i>Delete Category
+                            </button>
+                            {% endif %}
+                        </div>
+                    </form>
+                    
+                    {% if category %}
+                    <form id="delete-form" method="POST" action="{{ url_for('admin_delete_category', id=category.id) }}" style="display: none;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if category %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle me-2"></i>Category Info</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Projects in this category:</strong> {{ category.projects|length }}</p>
+                    <p><strong>Created:</strong> {{ category.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                    {% if category.projects %}
+                    <p><strong>Projects:</strong></p>
+                    <ul class="list-unstyled">
+                        {% for project in category.projects[:5] %}
+                        <li><i class="fas fa-folder me-1"></i>{{ project.title }}</li>
+                        {% endfor %}
+                        {% if category.projects|length > 5 %}
+                        <li><small class="text-muted">... and {{ category.projects|length - 5 }} more</small></li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

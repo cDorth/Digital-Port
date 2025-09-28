@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Portfólio Digital{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Modern Custom CSS -->
+    <link href="{{ url_for('static', filename='css/modern-style.css') }}" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body{% if current_user.is_authenticated %} data-authenticated="true" data-user-language="{{ current_user.preferred_language or 'pt-BR' }}"{% endif %}>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+                <i class="fas fa-code me-2"></i>Portfolio
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}" data-i18n="nav_home">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('projects') }}" data-i18n="nav_projects">Projetos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}" data-i18n="nav_about">Sobre</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('timeline') }}" data-i18n="nav_timeline">Timeline</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('skills_comparator') }}" data-i18n="nav_comparator">Comparador</a>
+                    </li>
+                    {% if current_user.is_authenticated and current_user.is_admin %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-shield-alt me-1"></i>Área do Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Painel de Controle
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_users') }}">
+                                <i class="fas fa-users me-2"></i>Gerenciar Usuários
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_logs') }}">
+                                <i class="fas fa-clipboard-list me-2"></i>Logs do Admin
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_projects') }}">
+                                <i class="fas fa-folder me-2"></i>Gerenciar Projetos
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_categories') }}">
+                                <i class="fas fa-tags me-2"></i>Gerenciar Categorias
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_about') }}">
+                                <i class="fas fa-user-edit me-2"></i>Editar Sobre
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- Search Form -->
+                {% if search_form %}
+                <form class="d-flex me-3" method="GET" action="{{ url_for('search') }}">
+                    <div class="input-group">
+                        <input class="form-control" type="search" 
+                               name="query" placeholder="Buscar projetos..." 
+                               data-i18n="search_placeholder"
+                               value="{{ request.args.get('query', '') }}">
+                        <button class="btn btn-outline-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+                
+                <!-- Theme Toggle -->
+                <button class="theme-toggle me-3" onclick="toggleTheme()" title="Alternar Modo Escuro/Claro">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+                
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>{{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i><span data-i18n="nav_logout">Sair</span>
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}" data-i18n="nav_login">Entrar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}" data-i18n="nav_register">Cadastrar</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Modern Footer -->
+    <footer class="mt-5 py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-3">Digital Portfolio</h5>
+                    <p class="text-muted mb-3">
+                        Showcasing creativity, innovation, and technical excellence through carefully crafted digital experiences.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="{{ about_me.github_url if about_me and about_me.github_url else 'https://github.com/cDorth' }}" target="_blank" 
+                           class="btn btn-outline-primary btn-sm rounded-circle" style="width: 40px; height: 40px;">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="{{ about_me.linkedin_url if about_me and about_me.linkedin_url else 'https://www.linkedin.com/in/carlosdorth/' }}" target="_blank" 
+                           class="btn btn-outline-primary btn-sm rounded-circle" style="width: 40px; height: 40px;">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="mailto:{{ about_me.email if about_me and about_me.email else 'contato@portfolio.com' }}" class="btn btn-outline-primary btn-sm rounded-circle" style="width: 40px; height: 40px;">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="fw-semibold mb-3">Portfolio</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ url_for('index') }}" class="text-decoration-none text-muted">Home</a></li>
+                        <li class="mb-2"><a href="{{ url_for('projects') }}" class="text-decoration-none text-muted">Projects</a></li>
+                        <li class="mb-2"><a href="{{ url_for('about') }}" class="text-decoration-none text-muted">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="fw-semibold mb-3">Account</h6>
+                    <ul class="list-unstyled">
+                        {% if current_user.is_authenticated %}
+                        <li class="mb-2"><a href="{{ url_for('logout') }}" class="text-decoration-none text-muted">Logout</a></li>
+                        {% else %}
+                        <li class="mb-2"><a href="{{ url_for('login') }}" class="text-decoration-none text-muted">Login</a></li>
+                        <li class="mb-2"><a href="{{ url_for('register') }}" class="text-decoration-none text-muted">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <h6 class="fw-semibold mb-3">Stay Updated</h6>
+                    <p class="text-muted small mb-3">Get notified about new projects and updates.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control form-control-sm" placeholder="Enter email">
+                        <button class="btn btn-primary btn-sm" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-muted small mb-0">
+                        &copy; {{ moment().format('YYYY') if moment else '2025' }} Digital Portfolio. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted small mb-0">
+                        Built with <i class="fas fa-heart text-danger"></i> using Flask & Modern CSS
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Modern Portfolio JS -->
+    <script src="{{ url_for('static', filename='js/modern-portfolio.js') }}"></script>
+    <!-- Language Switcher -->
+    <script src="{{ url_for('static', filename='js/language-switcher.js') }}"></script>
+    <!-- AI Recommendations -->
+    <script src="{{ url_for('static', filename='js/ai-recommendations.js') }}"></script>
+    <!-- Career Timeline -->
+    <script src="{{ url_for('static', filename='js/career-timeline.js') }}"></script>
+    <!-- Skills Comparator -->
+    <script src="{{ url_for('static', filename='js/skills-comparator.js') }}"></script>
+    
+    <!-- Like and Comment Functions -->
+    <script>
+    function toggleLike(projectId) {
+        const button = document.querySelector(`button[data-project-id="${projectId}"]`);
+        const likeCount = button.querySelector('.like-count');
+        const icon = button.querySelector('i');
+        
+        fetch('/api/like_project', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ project_id: projectId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                likeCount.textContent = data.likes_count;
+                // Update all like count displays
+                document.querySelectorAll(`.likes-count-${projectId}`).forEach(el => {
+                    el.textContent = data.likes_count;
+                });
+                
+                // Toggle button state
+                if (data.liked) {
+                    button.classList.remove('btn-outline-danger');
+                    button.classList.add('btn-danger');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    button.classList.remove('btn-danger');
+                    button.classList.add('btn-outline-danger');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            } else {
+                alert(data.error || 'Erro ao curtir projeto');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erro ao conectar com servidor');
+        });
+    }
+    
+    function submitComment(projectId) {
+        const form = document.getElementById('comment-form');
+        const textarea = form.querySelector('textarea[name="content"]');
+        const content = textarea.value.trim();
+        
+        if (!content) {
+            alert('Por favor, escreva um comentário');
+            return;
+        }
+        
+        if (content.length > 1000) {
+            alert('Comentário muito longo (máximo 1000 caracteres)');
+            return;
+        }
+        
+        fetch('/api/add_comment_api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ 
+                project_id: projectId,
+                content: content
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Clear form
+                textarea.value = '';
+                
+                // Update comment count
+                document.querySelectorAll(`.comments-count-${projectId}`).forEach(el => {
+                    el.textContent = parseInt(el.textContent) + 1;
+                });
+                
+                // Add new comment to top of list
+                const commentsList = document.getElementById('comments-list');
+                const newComment = document.createElement('div');
+                newComment.className = 'comment mb-3 p-3 border rounded';
+                newComment.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-placeholder bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">${data.author_name}</h6>
+                                <small class="text-muted">agora</small>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mb-0">${data.content}</p>
+                `;
+                commentsList.insertBefore(newComment, commentsList.firstChild);
+            } else {
+                alert(data.error || 'Erro ao adicionar comentário');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erro ao conectar com servidor');
+        });
+    }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

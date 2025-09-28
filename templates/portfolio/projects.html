@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Projects - Digital Portfolio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/professional-cards.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-folder-open me-2"></i>Projects</h2>
+                <div class="d-flex gap-2">
+                    <!-- Category Filter -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter me-1"></i>Category
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {{ 'active' if not current_category }}" href="{{ url_for('projects', language=current_language) }}">All Categories</a></li>
+                            {% for category in categories %}
+                            <li><a class="dropdown-item {{ 'active' if current_category == category.id }}" 
+                                   href="{{ url_for('projects', category=category.id, language=current_language) }}">{{ category.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <!-- Language Filter -->
+                    {% if all_languages %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fab fa-github me-1"></i>{{ current_language or 'All Languages' }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {{ 'active' if not current_language }}" href="{{ url_for('projects', category=current_category) }}">All Languages</a></li>
+                            {% for lang in all_languages %}
+                            <li><a class="dropdown-item {{ 'active' if current_language == lang.language }}" 
+                                   href="{{ url_for('projects', category=current_category, language=lang.language) }}">
+                                {{ lang.language }} ({{ lang.repository_count }})
+                            </a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CMS Projects Section -->
+    {% if projects.items %}
+    <div class="row">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="fas fa-folder me-2"></i>Portfolio Projects</h4>
+        </div>
+    </div>
+    <div class="row">
+        {% for project in projects.items %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if project.image_filename %}
+                <img src="{{ url_for('static', filename='uploads/' + project.image_filename) }}" 
+                     class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" 
+                     style="height: 200px;">
+                    <i class="fas fa-image fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ project.title }}</h5>
+                        {% if project.is_featured %}
+                        <span class="badge bg-warning">Featured</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if project.category %}
+                    <span class="badge bg-primary mb-2 align-self-start">{{ project.category.name }}</span>
+                    {% endif %}
+                    
+                    <p class="card-text flex-grow-1">
+                        {{ project.description[:120] }}{% if project.description|length > 120 %}...{% endif %}
+                    </p>
+                    
+                    <!-- Tags -->
+                    {% if project.tags %}
+                    <div class="mb-2">
+                        {% for tag in project.tags[:3] %}
+                        <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                        {% endfor %}
+                        {% if project.tags|length > 3 %}
+                        <span class="badge bg-light text-dark">+{{ project.tags|length - 3 }} more</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <div class="text-muted small">
+                            <i class="fas fa-eye me-1"></i>{{ project.views_count }}
+                            <i class="fas fa-heart ms-2 me-1"></i>{{ project.likes_count }}
+                            <i class="fas fa-comments ms-2 me-1"></i>{{ project.comments_count }}
+                        </div>
+                        <a href="{{ url_for('project_detail', id=project.id) }}" class="btn btn-primary btn-sm">
+                            View Details
+                        </a>
+                    </div>
+                    
+                    <div class="text-muted small mt-2">
+                        Created: {{ project.created_at.strftime('%B %d, %Y') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Professional GitHub Repositories Section -->
+    {% if github_repos %}
+    <div class="professional-projects-container mt-5">
+        <h2 class="professional-section-title">
+            <i class="fab fa-github"></i>GitHub Repositories
+        </h2>
+        
+        <div class="professional-grid">
+            {% for repo in github_repos %}
+            <div class="professional-card">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <div class="header-left">
+                        <span class="repo-icon">📁</span>
+                        <h3 class="project-title">{{ repo.name }}</h3>
+                    </div>
+                    {% if repo.is_fork %}
+                    <span class="fork-badge">Fork</span>
+                    {% endif %}
+                </div>
+                
+                <!-- Card Body -->
+                <div class="card-body">
+                    <!-- Description -->
+                    <p class="card-description {{ 'no-description' if not repo.description }}">
+                        {% if repo.description %}
+                            {{ repo.description[:120] }}{% if repo.description|length > 120 %}...{% endif %}
+                        {% else %}
+                            No description available
+                        {% endif %}
+                    </p>
+                    
+                    <!-- Programming Languages Badges -->
+                    {% if repo.primary_languages %}
+                    <div class="language-badges">
+                        {% for lang in repo.primary_languages %}
+                        {% set lang_class = lang.language.lower().replace('#', 'sharp').replace('+', 'plus').replace(' ', '') %}
+                        <span class="language-badge {{ lang_class if lang_class in ['python', 'javascript', 'html', 'css', 'typescript', 'java', 'php', 'ruby', 'go', 'csharp', 'rust', 'swift'] else 'default' }}">
+                            {{ lang.language }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Repository Statistics -->
+                    <div class="card-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-star stat-icon star"></i>
+                            <span>{{ repo.stargazers_count }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-code-branch stat-icon fork"></i>
+                            <span>{{ repo.forks_count }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="card-actions">
+                        <a href="{{ repo.html_url }}" target="_blank" class="btn-github">
+                            <i class="fab fa-github"></i>
+                            View on GitHub
+                        </a>
+                        
+                        {% if repo.homepage %}
+                        <a href="{{ repo.homepage }}" target="_blank" class="btn-demo">
+                            <i class="fas fa-external-link-alt"></i>
+                            Live Demo
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Last Updated Footer -->
+                    {% if repo.pushed_at %}
+                    <div class="card-footer">
+                        Last updated: {{ repo.pushed_at.strftime('%b %d, %Y') }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Pagination -->
+    {% if projects.pages > 1 %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if projects.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('projects', page=projects.prev_num, category=current_category) }}">Previous</a>
+            </li>
+            {% endif %}
+            
+            {% for page_num in projects.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num != projects.page %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('projects', page=page_num, category=current_category) }}">{{ page_num }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_num }}</span>
+                    </li>
+                    {% endif %}
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if projects.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('projects', page=projects.next_num, category=current_category) }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    <!-- No Content Message -->
+    {% if not projects.items and not github_repos %}
+    <div class="text-center py-5">
+        <i class="fas fa-folder-open fa-5x text-muted mb-3"></i>
+        <h4>No Projects Found</h4>
+        {% if current_category or current_language %}
+        <p class="text-muted mb-4">No projects found with the selected filters.</p>
+        <a href="{{ url_for('projects') }}" class="btn btn-primary">View All Projects</a>
+        {% else %}
+        <p class="text-muted mb-4">No projects available yet. Check back soon!</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

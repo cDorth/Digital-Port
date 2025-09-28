@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Comparador de Habilidades{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Skills Comparator Styles */
+.skills-comparator-section {
+    min-height: 80vh;
+}
+
+.vs-badge {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.metric-item {
+    text-align: center;
+    padding: 15px;
+    background: var(--bs-gray-50);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.metric-item:hover {
+    background: var(--bs-gray-100);
+    transform: translateY(-2px);
+}
+
+.metric-value {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.comparison-results {
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.comparison-chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+#comparison-chart {
+    max-width: 100%;
+    height: auto;
+}
+
+.recommendation-card {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.recommendation-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+}
+
+@media (max-width: 768px) {
+    .vs-badge {
+        margin: 15px 0;
+    }
+    
+    .metric-item {
+        margin-bottom: 15px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div id="skills-comparator">
+        <!-- Skills comparator will be populated by JavaScript -->
+    </div>
+</div>
+{% endblock %}

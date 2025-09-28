@@ -1158,12 +1158,16 @@ body {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
-[data-bs-theme="light"] .text-muted {
-    color: #a3a3a3 !important;
+[data-bs-theme="light"] .text-muted,
+[data-theme="light"] .text-muted,
+html:not([data-theme="dark"]):not([data-bs-theme="dark"]) .text-muted {
+    color: #222 !important;
 }
 
-[data-bs-theme="light"] .text-secondary {
-    color: #787878 !important;
+[data-bs-theme="light"] .text-secondary,
+[data-theme="light"] .text-secondary,
+html:not([data-theme="dark"]):not([data-bs-theme="dark"]) .text-secondary {
+    color: #222 !important;
 }
 
 /* Footer Styling - High Specificity */
@@ -1196,13 +1200,13 @@ html:not([data-bs-theme="dark"]) footer h6 {
 html[data-bs-theme="light"] body footer .text-muted,
 [data-bs-theme="light"] footer .text-muted,
 html:not([data-bs-theme="dark"]) footer .text-muted {
-    color: #6c757d !important;
+    color: #222 !important;
 }
 
 html[data-bs-theme="light"] body footer a.text-muted,
 [data-bs-theme="light"] footer a.text-muted,
 html:not([data-bs-theme="dark"]) footer a.text-muted {
-    color: #6c757d !important;
+    color: #222 !important;
 }
 
 html[data-bs-theme="light"] body footer a.text-muted:hover,

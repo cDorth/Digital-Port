@@ -21,11 +21,10 @@ if not app.secret_key:
     raise RuntimeError("SESSION_SECRET environment variable must be set")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Configure the database - PostgreSQL (Replit integrated database)
-database_url = os.environ.get("DATABASE_URL")
-if not database_url:
-    raise RuntimeError("DATABASE_URL not found - PostgreSQL database required")
-app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+# Configure the database - SQLite (file-based, integrated with project files)
+import os
+db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'portfolio.db')
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
@@ -60,25 +59,66 @@ with app.app_context():
     # GitHub credentials configured for on-demand sync
     logging.info("GitHub sync system initialized")
     
-    # Auto-configure GitHub credentials if available
+    # Auto-configure GitHub credentials and sync repositories
     try:
         from github_client import GitHubClient
-        client = GitHubClient()
-        if not client.validate_connection():
-            client.initialize_credentials_from_env()
-    except Exception as e:
-        logging.debug(f"GitHub credentials auto-setup: {e}")
-    
-    # Start automatic GitHub synchronization (optional)
-    try:
-        from auto_sync_scheduler import start_background_sync
-        if start_background_sync():
-            logging.info("GitHub auto-sync service started")
+        from github_sync import GitHubSyncService
+        
+        # Check if GITHUB_TOKEN exists
+        github_token = os.environ.get('GITHUB_TOKEN')
+        if not github_token:
+            logging.warning("="*80)
+            logging.warning("GITHUB_TOKEN não configurado!")
+            logging.warning("Para carregar automaticamente seus projetos GitHub:")
+            logging.warning("1. Vá em Secrets (🔒) no painel lateral do Replit")
+            logging.warning("2. Adicione: GITHUB_TOKEN = seu_token_github")
+            logging.warning("3. Reinicie a aplicação")
+            logging.warning("="*80)
         else:
-            logging.info("GitHub auto-sync not started - configure GITHUB_TOKEN in Secrets to enable")
+            # Initialize GitHub client and sync repositories
+            client = GitHubClient()
+            
+            # Validate and store credentials
+            if client.validate_connection():
+                # Get user info to store credentials
+                user_info = client.get_authenticated_user()
+                if user_info:
+                    username = user_info.get('login')
+                    
+                    # Store encrypted credentials in database
+                    if crypto_manager is not None:
+                        client.store_github_credentials(username, github_token)
+                        logging.info(f"GitHub credentials armazenadas para: {username}")
+                    
+                    # Perform initial sync of repositories
+                    try:
+                        sync_service = GitHubSyncService()
+                        logging.info(f"Iniciando sincronização de repositórios para {username}...")
+                        
+                        success, message, repos_synced = sync_service.sync_user_repositories(username)
+                        if success:
+                            logging.info(f"✅ Sincronização concluída: {repos_synced} repositórios carregados")
+                        else:
+                            logging.warning(f"⚠️ Sincronização parcial: {message}")
+                    except Exception as sync_error:
+                        logging.error(f"Erro na sincronização: {sync_error}")
+                        
+                else:
+                    logging.error("Não foi possível obter informações do usuário GitHub")
+            else:
+                logging.error("Token GitHub inválido - verifique suas permissões")
+        
+        # Start background sync (optional)
+        try:
+            from auto_sync_scheduler import start_background_sync
+            if start_background_sync():
+                logging.info("Sincronização automática em background ativada")
+        except Exception as e:
+            logging.debug(f"Background sync não iniciado: {e}")
+            
     except Exception as e:
-        logging.warning(f"GitHub auto-sync not available: {e}")
-        logging.info("System will continue without GitHub sync")
+        logging.warning(f"GitHub setup error: {e}")
+        logging.info("Sistema continuará sem sincronização GitHub")
 
 # Import and initialize API routes
 from api_routes import init_api_routes

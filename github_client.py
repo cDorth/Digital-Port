@@ -6,8 +6,14 @@ from typing import Dict, List, Optional, Any
 import requests
 from flask import current_app
 from models import GitHubCredentials
-from crypto_utils import crypto_manager
 from app import db
+
+# Safe import of crypto_manager
+try:
+    from crypto_utils import crypto_manager
+except ImportError:
+    crypto_manager = None
+    logging.warning("crypto_utils não disponível - credenciais não serão criptografadas")
 
 logger = logging.getLogger(__name__)
 

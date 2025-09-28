@@ -8,9 +8,15 @@ import time
 import threading
 import logging
 from datetime import datetime, timedelta
-from app import app, db
-from github_sync import GitHubSyncService
-from models import GitHubCredentials, GitHubSyncLog
+
+# Safe imports to avoid circular dependencies
+try:
+    from app import app, db
+    from github_sync import GitHubSyncService
+    from models import GitHubCredentials, GitHubSyncLog
+except ImportError as e:
+    print(f"Import error in auto_sync_scheduler: {e}")
+    app = None
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -96,8 +102,18 @@ auto_sync = GitHubAutoSync()
 
 def start_background_sync():
     """Start background synchronization service"""
-    # Only start if we have GitHub credentials
+    if not app:
+        logger.error("App não disponível para auto-sync")
+        return False
+        
+    # Only start if we have GitHub credentials or token
     try:
+        github_token = os.environ.get('GITHUB_TOKEN')
+        if github_token:
+            # Start sync even if no credentials in DB yet
+            auto_sync.start_auto_sync()
+            return True
+            
         with app.app_context():
             if GitHubCredentials.query.filter_by(is_active=True).first():
                 auto_sync.start_auto_sync()

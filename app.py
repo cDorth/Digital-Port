@@ -61,6 +61,7 @@ with app.app_context():
     
     # Auto-configure GitHub credentials and sync repositories
     try:
+        from crypto_utils import crypto_manager
         from github_client import GitHubClient
         from github_sync import GitHubSyncService
         
@@ -85,10 +86,15 @@ with app.app_context():
                 if user_info:
                     username = user_info.get('login')
                     
-                    # Store encrypted credentials in database
-                    if crypto_manager is not None:
-                        client.store_github_credentials(username, github_token)
-                        logging.info(f"GitHub credentials armazenadas para: {username}")
+                    # Store encrypted credentials in database (if crypto available)
+                    try:
+                        if crypto_manager is not None:
+                            client.store_github_credentials(username, github_token)
+                            logging.info(f"GitHub credentials armazenadas para: {username}")
+                        else:
+                            logging.info(f"GitHub conectado para: {username} (sem criptografia)")
+                    except Exception as e:
+                        logging.warning(f"Aviso ao armazenar credenciais: {e}")
                     
                     # Perform initial sync of repositories
                     try:

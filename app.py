@@ -21,8 +21,11 @@ if not app.secret_key:
     raise RuntimeError("SESSION_SECRET environment variable must be set")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Configure the database - PostgreSQL
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL") or "sqlite:///fallback.db"
+# Configure the database - PostgreSQL (Replit integrated database)
+database_url = os.environ.get("DATABASE_URL")
+if not database_url:
+    raise RuntimeError("DATABASE_URL not found - PostgreSQL database required")
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,

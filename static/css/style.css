@@ -270,6 +270,66 @@ footer {
   color: #e9ecef;
 }
 
+/* About Page Styling */
+.about-content {
+  color: #212529 !important;
+}
+
+.about-content p {
+  color: #2c3e50 !important;
+  font-weight: 500;
+}
+
+.about-content .timeline-item strong {
+  color: #1a252f !important;
+}
+
+.about-content .timeline-item p {
+  color: #343a40 !important;
+  line-height: 1.6;
+}
+
+.about-content .card-body {
+  color: #212529 !important;
+}
+
+.about-content h2, 
+.about-content h3 {
+  color: #1a252f !important;
+  font-weight: 600;
+}
+
+.about-content .card-body ul li {
+  color: #2c3e50 !important;
+  font-weight: 500;
+}
+
+/* Dark mode adjustments for about page */
+[data-bs-theme="dark"] .about-content {
+  color: #e9ecef !important;
+}
+
+[data-bs-theme="dark"] .about-content p {
+  color: #dee2e6 !important;
+}
+
+[data-bs-theme="dark"] .about-content .timeline-item strong {
+  color: #f8f9fa !important;
+}
+
+[data-bs-theme="dark"] .about-content .timeline-item p {
+  color: #ced4da !important;
+}
+
+[data-bs-theme="dark"] .about-content h2, 
+[data-bs-theme="dark"] .about-content h3 {
+  color: #f8f9fa !important;
+}
+
+[data-bs-theme="dark"] .about-content .card-body ul li {
+  color: #dee2e6 !important;
+}
+
 /* Utility Classes */
 .text-truncate-2 {
   display: -webkit-box;

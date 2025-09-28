@@ -16,9 +16,9 @@
                 </div>
                 {% endif %}
                 
-                <div class="card-body text-center about-content">
-                    <h1 class="card-title">{{ about_me.title }}</h1>
-                    <div class="mt-4 text-start">
+                <div class="card-body text-center about-content bootstrap-override-about-text">
+                    <h1 class="card-title bootstrap-override-about-text">{{ about_me.title }}</h1>
+                    <div class="mt-4 text-start bootstrap-override-about-text">
                         {{ about_me.content|safe }}
                     </div>
                 </div>

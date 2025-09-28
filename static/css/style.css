@@ -270,115 +270,101 @@ footer {
   color: #e9ecef;
 }
 
-/* About Page Styling - Super força texto escuro no tema claro */
-body .about-content,
-body .about-content *,
-html body .about-content,
-html body .about-content *,
-.container .about-content,
-.container .about-content *,
-.card .about-content,
-.card .about-content *,
-.card-body.about-content,
-.card-body.about-content * {
+/* About Page Styling - FORÇA BRUTAL para texto preto no tema claro */
+
+/* Bootstrap Override - Máxima Especificidade Possível */
+.container .col-lg-8 .card .card-body.text-center.about-content,
+.container .col-lg-8 .card .card-body.text-center.about-content *,
+.container .col-lg-8 .card .card-body.text-center.about-content h1,
+.container .col-lg-8 .card .card-body.text-center.about-content .card-title,
+.container .col-lg-8 .card .card-body.text-center.about-content p,
+.container .col-lg-8 .card .card-body.text-center.about-content div,
+.container .col-lg-8 .card .card-body.text-center.about-content span,
+.container .col-lg-8 .card .card-body.text-center.about-content strong,
+.container .col-lg-8 .card .card-body.text-center.about-content .mt-4,
+.container .col-lg-8 .card .card-body.text-center.about-content .mt-4 *,
+.container .col-lg-8 .card .card-body.text-center.about-content .text-start,
+.container .col-lg-8 .card .card-body.text-center.about-content .text-start * {
   color: #000000 !important;
   text-shadow: none !important;
+  -webkit-text-fill-color: #000000 !important;
 }
 
-/* Títulos com máxima especificidade */
-body .about-content .card-title,
-body .about-content h1,
-body .about-content h2, 
-body .about-content h3,
-body .about-content h4,
-body .about-content h5,
-body .about-content h6,
-html body .about-content .card-title,
-html body .about-content h1,
-html body .about-content h2, 
-html body .about-content h3,
-.container .card .about-content h1,
-.container .card .about-content .card-title {
-  color: #000000 !important;
-  font-weight: 700 !important;
-  text-shadow: none !important;
-}
-
-/* Parágrafos e textos com máxima especificidade */
-body .about-content p,
-body .about-content .card-body,
-body .about-content ul li,
-body .about-content div,
-body .about-content span,
-html body .about-content p,
-html body .about-content .card-body,
-html body .about-content ul li,
-html body .about-content div,
-html body .about-content span,
-.container .card .about-content p,
-.container .card .about-content div,
-.container .card-body.about-content p {
-  color: #000000 !important;
-  font-weight: 500 !important;
-  text-shadow: none !important;
-}
-
-/* Strong e bold com máxima especificidade */
-body .about-content .timeline-item strong,
-body .about-content strong,
-body .about-content b,
-html body .about-content strong,
-html body .about-content b,
-.container .card .about-content strong {
-  color: #000000 !important;
-  font-weight: 700 !important;
-  text-shadow: none !important;
-}
-
-/* Seletores extremamente específicos para tema claro */
-html:not([data-bs-theme="dark"]) body .about-content,
-html:not([data-bs-theme="dark"]) body .about-content *,
-[data-bs-theme="light"] body .about-content,
-[data-bs-theme="light"] body .about-content *,
-body:not([data-bs-theme="dark"]) .about-content,
-body:not([data-bs-theme="dark"]) .about-content *,
-html[data-bs-theme="light"] body .about-content,
-html[data-bs-theme="light"] body .about-content * {
+/* Específico para tema claro - Super override */
+html:not([data-bs-theme="dark"]) .container .col-lg-8 .card .card-body.text-center.about-content,
+html:not([data-bs-theme="dark"]) .container .col-lg-8 .card .card-body.text-center.about-content *,
+html:not([data-bs-theme="dark"]) .container .col-lg-8 .card .card-body.text-center.about-content h1,
+html:not([data-bs-theme="dark"]) .container .col-lg-8 .card .card-body.text-center.about-content p,
+[data-bs-theme="light"] .container .col-lg-8 .card .card-body.text-center.about-content,
+[data-bs-theme="light"] .container .col-lg-8 .card .card-body.text-center.about-content *,
+body:not([data-bs-theme="dark"]) .container .col-lg-8 .card .card-body.text-center.about-content,
+body:not([data-bs-theme="dark"]) .container .col-lg-8 .card .card-body.text-center.about-content * {
   color: #000000 !important;
   text-shadow: none !important;
+  -webkit-text-fill-color: #000000 !important;
+  opacity: 1 !important;
 }
 
-/* Força total para card específico */
-.card-body.text-center.about-content,
-.card-body.text-center.about-content *,
-.card-body.about-content,
-.card-body.about-content *,
-body .card-body.about-content,
-body .card-body.about-content *,
-html body .card-body.about-content,
-html body .card-body.about-content * {
-  color: #000000 !important;
-  text-shadow: none !important;
-}
-
-/* Override de classes Bootstrap específicas */
-.about-content.text-muted,
+/* Override direto para classes Bootstrap problemáticas */
 .about-content .text-muted,
-.about-content.text-secondary,
-.about-content .text-secondary,
-body .about-content.text-muted,
-body .about-content .text-muted,
-body .about-content.text-secondary,
-body .about-content .text-secondary {
+.about-content.text-muted,
+.card-body.about-content .text-muted,
+.card .card-body .about-content .text-muted,
+html .about-content .text-muted,
+html .card .about-content .text-muted {
   color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
 }
 
-/* Força para qualquer elemento Bootstrap */
-.card .card-body.about-content .text-start,
-.card .card-body.about-content .text-start *,
-.card .card-body.about-content .mt-4,
-.card .card-body.about-content .mt-4 * {
+.about-content .text-secondary,
+.about-content.text-secondary,
+.card-body.about-content .text-secondary,
+.card .card-body .about-content .text-secondary,
+html .about-content .text-secondary,
+html .card .about-content .text-secondary {
   color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Força para todos os elementos filhos */
+.about-content > *,
+.about-content > * > *,
+.about-content > * > * > *,
+.about-content > * > * > * > * {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Força específica para o título "Sobre Mim" */
+.card-body.about-content h1.card-title,
+.card-body.about-content .card-title,
+html .card-body.about-content h1.card-title,
+html .card-body.about-content .card-title {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* Força para parágrafos e divs */
+.card-body.about-content p,
+.card-body.about-content div,
+.card-body.about-content .mt-4,
+.card-body.about-content .text-start,
+html .card-body.about-content p,
+html .card-body.about-content div,
+html .card-body.about-content .mt-4,
+html .card-body.about-content .text-start {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* CSS mais específico que o Bootstrap - usando classe de alta especificidade */
+.bootstrap-override-about-text,
+.bootstrap-override-about-text *,
+.card .bootstrap-override-about-text,
+.card .bootstrap-override-about-text * {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
 }
 
 /* Dark mode adjustments for about page */

@@ -272,48 +272,48 @@ footer {
 
 /* About Page Styling */
 .about-content {
-  color: #000 !important;
+  color: #1a1a1a !important;
 }
 
 .about-content .card-title {
-  color: #222 !important;
+  color: #0f0f0f !important;
   font-weight: 700;
 }
 
 .about-content p {
-  color: #111 !important;
+  color: #1a1a1a !important;
   font-weight: 500;
 }
 
 .about-content .timeline-item strong {
-  color: #000 !important;
+  color: #0f0f0f !important;
   font-weight: 600;
 }
 
 .about-content .timeline-item p {
-  color: #222 !important;
+  color: #1a1a1a !important;
   line-height: 1.6;
   font-weight: 500;
 }
 
 .about-content .card-body {
-  color: #000 !important;
+  color: #1a1a1a !important;
 }
 
 .about-content h1,
 .about-content h2, 
 .about-content h3 {
-  color: #222 !important;
+  color: #0f0f0f !important;
   font-weight: 700;
 }
 
 .about-content .card-body ul li {
-  color: #111 !important;
+  color: #1a1a1a !important;
   font-weight: 600;
 }
 
 .about-content .card-body ul li strong {
-  color: #000 !important;
+  color: #0f0f0f !important;
   font-weight: 700;
 }
 
